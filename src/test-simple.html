@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Ofert Pracy</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #1a1a1a;
+            color: white;
+            padding: 20px;
+        }
+        .job-card {
+            background: #333;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border: 2px solid #00ff00;
+        }
+        .job-title {
+            color: #00ff00;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+        .job-company {
+            color: #888;
+            margin: 5px 0;
+        }
+        .job-location {
+            color: #ccc;
+        }
+    </style>
+</head>
+<body>
+    <h1>🚀 Test sekcji ofert pracy</h1>
+    <div id="jobContainer">
+        <div>⏳ Ładowanie ofert...</div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 Testowanie ładowania ofert...');
+            
+            const jobs = [
+                {
+                    'Stanowisko': 'Frontend Developer',
+                    ' Miejsce pracy': 'Warszawa, mazowieckie',
+                    ' Rodzaj umowy': 'Umowa o pracę',
+                    ' Pracodawca': 'TechCorp'
+                },
+                {
+                    'Stanowisko': 'Backend Developer',
+                    ' Miejsce pracy': 'Kraków, małopolskie',
+                    ' Rodzaj umowy': 'Umowa zlecenie',
+                    ' Pracodawca': 'DevStudio'
+                }
+            ];
+            
+            const container = document.getElementById('jobContainer');
+            console.log('📊 Załadowano', jobs.length, 'ofert');
+            
+            const jobsHTML = jobs.map(job => {
+                const stanowisko = (job['Stanowisko'] || '').trim();
+                const miejsce = (job[' Miejsce pracy'] || '').trim();
+                const pracodawca = (job[' Pracodawca'] || '').trim();
+                
+                return `
+                    <div class="job-card">
+                        <div class="job-title">${stanowisko}</div>
+                        <div class="job-company">${pracodawca}</div>
+                        <div class="job-location">📍 ${miejsce}</div>
+                    </div>
+                `;
+            }).join('');
+            
+            container.innerHTML = jobsHTML;
+            console.log('✅ Oferty wyświetlone pomyślnie');
+        });
+    </script>
+</body>
+</html>

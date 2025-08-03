@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wyszukiwarka Ofert - eCVjob.pl</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background: url('images/tlo.jpg') no-repeat center center fixed;
+            background-size: cover;
+            color: #fff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            background: rgba(0,0,0,0.95);
+            border: 3px solid #00ff00;
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 30px;
+            box-shadow: 0 0 40px rgba(0,255,0,0.4);
+        }
+        
+        .nav-menu {
+            background: rgba(0,0,0,0.9);
+            border: 2px solid #00ff00;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .nav-btn {
+            background: linear-gradient(45deg, #00ff00, #00fff7);
+            border: none;
+            border-radius: 10px;
+            padding: 12px 25px;
+            color: #000;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,255,0,0.4);
+        }
+        
+        .nav-btn.active {
+            background: #00ff00;
+            box-shadow: 0 0 20px rgba(0,255,0,0.6);
+        }
+        
+        .back-btn {
+            background: rgba(0,255,0,0.2);
+            border: 2px solid #00ff00;
+            border-radius: 10px;
+            padding: 12px 25px;
+            color: #00ff00;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .back-btn:hover {
+            background: rgba(0,255,0,0.3);
+            transform: translateY(-2px);
+        }
+        
+        .job-search-section {
+            background: rgba(0,0,0,0.95);
+            border: 3px solid #00ff00;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 0 40px rgba(0,255,0,0.4);
+        }
+        
+        .section-title {
+            color: #00fff7;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 0 0 20px rgba(0,255,247,0.5);
+        }
+        
+        .search-filters {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr auto;
+            gap: 20px;
+            margin-bottom: 40px;
+            align-items: end;
+        }
+        
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .filter-label {
+            color: #00ff00;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        
+        .search-input, .filter-select {
+            background: rgba(0,0,0,0.7);
+            border: 2px solid #00ff00;
+            border-radius: 10px;
+            padding: 15px;
+            color: #fff;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        
+        .search-input:focus, .filter-select:focus {
+            outline: none;
+            box-shadow: 0 0 20px rgba(0,255,0,0.5);
+            border-color: #00fff7;
+        }
+        
+        .search-btn {
+            background: linear-gradient(45deg, #00ff00, #00fff7);
+            border: none;
+            border-radius: 10px;
+            padding: 15px 30px;
+            color: #000;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 16px;
+        }
+        
+        .search-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,255,0,0.4);
+        }
+        
+        .search-stats {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding: 15px;
+            background: rgba(0,255,0,0.1);
+            border: 1px solid #00ff00;
+            border-radius: 10px;
+        }
+        
+        .results-count {
+            color: #00fff7;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        
+        .sort-options {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .sort-btn {
+            background: rgba(0,0,0,0.7);
+            border: 1px solid #00ff00;
+            border-radius: 8px;
+            padding: 8px 15px;
+            color: #00ff00;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .sort-btn:hover, .sort-btn.active {
+            background: rgba(0,255,0,0.2);
+        }
+        
+        .job-results {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+        
+        .job-item {
+            background: rgba(0,0,0,0.8);
+            border: 2px solid #00ff00;
+            border-radius: 15px;
+            padding: 30px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .job-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0,255,0,0.1), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .job-item:hover::before {
+            left: 100%;
+        }
+        
+        .job-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,255,0,0.3);
+        }
+        
+        .job-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .job-title {
+            color: #00fff7;
+            font-size: 24px;
+            margin: 0;
+            text-shadow: 0 0 10px rgba(0,255,247,0.5);
+        }
+        
+        .salary {
+            background: linear-gradient(45deg, #00ff00, #00fff7);
+            color: #000;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+            font-size: 16px;
+            box-shadow: 0 0 15px rgba(0,255,0,0.3);
+        }
+        
+        .job-company {
+            color: #ccc;
+            margin-bottom: 15px;
+            font-size: 16px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .job-location {
+            color: #00ff00;
+            font-weight: bold;
+        }
+        
+        .job-description {
+            color: #fff;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .job-tags {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .tag {
+            background: rgba(0,255,0,0.2);
+            color: #00ff00;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            border: 1px solid #00ff00;
+            transition: all 0.3s ease;
+        }
+        
+        .tag:hover {
+            background: rgba(0,255,0,0.3);
+            transform: translateY(-2px);
+        }
+        
+        .job-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .job-date {
+            color: #888;
+            font-size: 14px;
+        }
+        
+        .apply-btn {
+            background: linear-gradient(45deg, #00ff00, #00fff7);
+            border: none;
+            border-radius: 10px;
+            padding: 12px 25px;
+            color: #000;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 16px;
+        }
+        
+        .apply-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,255,0,0.4);
+        }
+        
+        .load-more {
+            text-align: center;
+            margin-top: 40px;
+        }
+        
+        .load-more-btn {
+            background: rgba(0,255,0,0.2);
+            border: 2px solid #00ff00;
+            border-radius: 10px;
+            padding: 15px 40px;
+            color: #00ff00;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 16px;
+        }
+        
+        .load-more-btn:hover {
+            background: rgba(0,255,0,0.3);
+            transform: translateY(-2px);
+        }
+        
+        @media (max-width: 768px) {
+            .search-filters {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .job-header {
+                flex-direction: column;
+                gap: 10px;
+                align-items: flex-start;
+            }
+            
+            .job-footer {
+                flex-direction: column;
+                gap: 15px;
+                align-items: flex-start;
+            }
+            
+            .nav-menu {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔍 Wyszukiwarka Ofert Pracy</h1>
+            <p>Znajdź idealną pracę dopasowaną do Twoich umiejętności</p>
+        </div>
+        
+        <div class="nav-menu">
+            <a href="centrum-zarabiania.html" class="nav-btn">🏠 Dashboard</a>
+            <a href="wyszukiwarka-ofert.html" class="nav-btn active">🔍 Wyszukiwarka Ofert</a>
+            <a href="profil-podstawowy.html" class="nav-btn">👤 Profil Podstawowy</a>
+            <a href="moj-profil.html" class="back-btn">← Powrót do profilu</a>
+        </div>
+        
+        <div class="job-search-section">
+            <h2 class="section-title">🎯 Znajdź swoją wymarzoną pracę</h2>
+            
+            <div class="search-filters">
+                <div class="filter-group">
+                    <label class="filter-label">Stanowisko</label>
+                    <input type="text" placeholder="🔍 Szukaj stanowiska..." class="search-input" id="jobSearchInput">
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Lokalizacja</label>
+                    <select class="filter-select" id="locationFilter">
+                        <option value="">📍 Wszystkie lokalizacje</option>
+                        <option value="warszawa">Warszawa</option>
+                        <option value="krakow">Kraków</option>
+                        <option value="gdansk">Gdańsk</option>
+                        <option value="wroclaw">Wrocław</option>
+                        <option value="poznan">Poznań</option>
+                        <option value="lodz">Łódź</option>
+                        <option value="remote">Praca zdalna</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Branża</label>
+                    <select class="filter-select" id="industryFilter">
+                        <option value="">💼 Wszystkie branże</option>
+                        <option value="it">IT / Programowanie</option>
+                        <option value="marketing">Marketing</option>
+                        <option value="sales">Sprzedaż</option>
+                        <option value="finance">Finanse</option>
+                        <option value="hr">HR</option>
+                        <option value="design">Design</option>
+                        <option value="education">Edukacja</option>
+                    </select>
+                </div>
+                <button class="search-btn" onclick="searchJobs()">Szukaj</button>
+            </div>
+            
+            <div class="search-stats">
+                <div class="results-count">
+                    Znaleziono <strong id="resultsCount">15</strong> ofert pracy
+                </div>
+                <div class="sort-options">
+                    <span style="color: #00ff00; margin-right: 10px;">Sortuj:</span>
+                    <button class="sort-btn active" onclick="sortJobs('date')">Data</button>
+                    <button class="sort-btn" onclick="sortJobs('salary')">Wynagrodzenie</button>
+                    <button class="sort-btn" onclick="sortJobs('relevance')">Relevance</button>
+                </div>
+            </div>
+            
+            <div class="job-results" id="jobResults">
+                <div class="job-item">
+                    <div class="job-header">
+                        <h3 class="job-title">Senior Frontend Developer</h3>
+                        <div class="salary">12,000 - 16,000 zł</div>
+                    </div>
+                    <div class="job-company">TechCorp Sp. z o.o. • <span class="job-location">Warszawa / Praca zdalna</span></div>
+                    <div class="job-description">
+                        Szukamy doświadczonego Frontend Developera do pracy nad nowoczesnymi aplikacjami webowymi. 
+                        Oferujemy elastyczne godziny pracy, możliwość pracy zdalnej i doskonały pakiet benefitów.
+                    </div>
+                    <div class="job-tags">
+                        <span class="tag">React</span>
+                        <span class="tag">TypeScript</span>
+                        <span class="tag">Node.js</span>
+                        <span class="tag">CSS3</span>
+                        <span class="tag">Praca zdalna</span>
+                    </div>
+                    <div class="job-footer">
+                        <div class="job-date">Opublikowano: 2 dni temu</div>
+                        <button class="apply-btn" onclick="applyToJob('Senior Frontend Developer', 'TechCorp')">📝 Aplikuj</button>
+                    </div>
+                </div>
+                
+                <div class="job-item">
+                    <div class="job-header">
+                        <h3 class="job-title">Marketing Specialist</h3>
+                        <div class="salary">6,500 - 9,000 zł</div>
+                    </div>
+                    <div class="job-company">MediaGroup • <span class="job-location">Kraków</span></div>
+                    <div class="job-description">
+                        Dołącz do dynamicznego zespołu marketingowego i rozwijaj kampanie dla znanych marek. 
+                        Idealna okazja dla kreatywnych osób z pasją do marketingu cyfrowego.
+                    </div>
+                    <div class="job-tags">
+                        <span class="tag">Google Ads</span>
+                        <span class="tag">SEO</span>
+                        <span class="tag">Facebook Ads</span>
+                        <span class="tag">Analytics</span>
+                        <span class="tag">Content Marketing</span>
+                    </div>
+                    <div class="job-footer">
+                        <div class="job-date">Opublikowano: 5 dni temu</div>
+                        <button class="apply-btn" onclick="applyToJob('Marketing Specialist', 'MediaGroup')">📝 Aplikuj</button>
+                    </div>
+                </div>
+                
+                <div class="job-item">
+                    <div class="job-header">
+                        <h3 class="job-title">Project Manager IT</h3>
+                        <div class="salary">11,000 - 15,000 zł</div>
+                    </div>
+                    <div class="job-company">InnovateLabs • <span class="job-location">Gdańsk</span></div>
+                    <div class="job-description">
+                        Prowadzimy zespoły projektowe w realizacji zaawansowanych rozwiązań IT dla klientów z różnych branż. 
+                        Szukamy osoby z doświadczeniem w zarządzaniu projektami Agile.
+                    </div>
+                    <div class="job-tags">
+                        <span class="tag">Agile</span>
+                        <span class="tag">Scrum</span>
+                        <span class="tag">Leadership</span>
+                        <span class="tag">JIRA</span>
+                        <span class="tag">Team Management</span>
+                    </div>
+                    <div class="job-footer">
+                        <div class="job-date">Opublikowano: 1 tydzień temu</div>
+                        <button class="apply-btn" onclick="applyToJob('Project Manager IT', 'InnovateLabs')">📝 Aplikuj</button>
+                    </div>
+                </div>
+                
+                <div class="job-item">
+                    <div class="job-header">
+                        <h3 class="job-title">UX/UI Designer</h3>
+                        <div class="salary">8,000 - 12,000 zł</div>
+                    </div>
+                    <div class="job-company">DesignStudio • <span class="job-location">Wrocław / Hybrydowo</span></div>
+                    <div class="job-description">
+                        Twórz intuicyjne i piękne interfejsy użytkownika dla aplikacji mobilnych i webowych. 
+                        Pracuj z międzynarodowymi klientami nad projektami o globalnym zasięgu.
+                    </div>
+                    <div class="job-tags">
+                        <span class="tag">Figma</span>
+                        <span class="tag">Adobe XD</span>
+                        <span class="tag">Prototyping</span>
+                        <span class="tag">User Research</span>
+                        <span class="tag">Mobile Design</span>
+                    </div>
+                    <div class="job-footer">
+                        <div class="job-date">Opublikowano: 3 dni temu</div>
+                        <button class="apply-btn" onclick="applyToJob('UX/UI Designer', 'DesignStudio')">📝 Aplikuj</button>
+                    </div>
+                </div>
+                
+                <div class="job-item">
+                    <div class="job-header">
+                        <h3 class="job-title">Backend Developer Python</h3>
+                        <div class="salary">10,000 - 14,000 zł</div>
+                    </div>
+                    <div class="job-company">DataTech Solutions • <span class="job-location">Poznań / Praca zdalna</span></div>
+                    <div class="job-description">
+                        Rozwijaj skalowalne systemy backendowe wykorzystując najnowsze technologie Python. 
+                        Praca nad projektami związanymi z machine learning i analizą danych.
+                    </div>
+                    <div class="job-tags">
+                        <span class="tag">Python</span>
+                        <span class="tag">Django</span>
+                        <span class="tag">PostgreSQL</span>
+                        <span class="tag">Docker</span>
+                        <span class="tag">AWS</span>
+                    </div>
+                    <div class="job-footer">
+                        <div class="job-date">Opublikowano: 4 dni temu</div>
+                        <button class="apply-btn" onclick="applyToJob('Backend Developer Python', 'DataTech Solutions')">📝 Aplikuj</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="load-more">
+                <button class="load-more-btn" onclick="loadMoreJobs()">📋 Załaduj więcej ofert</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function searchJobs() {
+            const searchTerm = document.getElementById('jobSearchInput').value;
+            const location = document.getElementById('locationFilter').value;
+            const industry = document.getElementById('industryFilter').value;
+            
+            console.log(`🔍 Wyszukiwanie ofert pracy:`);
+            console.log(`- Stanowisko: "${searchTerm}"`);
+            console.log(`- Lokalizacja: "${location}"`);
+            console.log(`- Branża: "${industry}"`);
+            
+            // Symulacja wyszukiwania
+            const resultsCount = Math.floor(Math.random() * 50) + 10;
+            document.getElementById('resultsCount').textContent = resultsCount;
+            
+            console.log(`📊 Znaleziono ${resultsCount} pasujących ofert`);
+        }
+        
+        function sortJobs(criteria) {
+            // Usuń aktywną klasę z wszystkich przycisków
+            document.querySelectorAll('.sort-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Dodaj aktywną klasę do klikniętego przycisku
+            event.target.classList.add('active');
+            
+            console.log(`📊 Sortowanie ofert według: ${criteria}`);
+        }
+        
+        function applyToJob(jobTitle, company) {
+            console.log(`📝 Aplikowanie do oferty:`);
+            console.log(`- Stanowisko: ${jobTitle}`);
+            console.log(`- Firma: ${company}`);
+            console.log('✅ Aplikacja została wysłana pomyślnie!');
+            console.log('📧 Otrzymasz potwierdzenie na email w ciągu 24 godzin');
+        }
+        
+        function loadMoreJobs() {
+            console.log('📋 Ładowanie kolejnych ofert pracy...');
+            console.log('✅ Załadowano 10 dodatkowych ofert');
+            
+            // Symulacja zwiększenia liczby wyników
+            const currentCount = parseInt(document.getElementById('resultsCount').textContent);
+            document.getElementById('resultsCount').textContent = currentCount + 10;
+        }
+        
+        // Event listener dla Enter w polu wyszukiwania
+        document.getElementById('jobSearchInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchJobs();
+            }
+        });
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🔍 Wyszukiwarka ofert pracy załadowana');
+            console.log('💼 Dostępne funkcje: wyszukiwanie, filtrowanie, sortowanie, aplikowanie');
+        });
+    </script>
+</body>
+</html>

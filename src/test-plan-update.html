@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Aktualizacji Planu - Baza CV</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            background: #000; 
+            color: #fff; 
+            padding: 20px; 
+        }
+        .nav-menu { 
+            list-style: none; 
+            display: flex; 
+            gap: 20px; 
+            background: #222; 
+            padding: 10px; 
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .nav-menu li { 
+            color: #00ff00; 
+            font-weight: bold;
+        }
+        button { 
+            background: #00ff00; 
+            color: #000; 
+            border: none; 
+            padding: 10px 20px; 
+            margin: 10px; 
+            border-radius: 5px; 
+            cursor: pointer; 
+        }
+        .test-section { 
+            background: #222; 
+            padding: 20px; 
+            margin: 20px 0; 
+            border-radius: 8px; 
+        }
+        .status-display {
+            background: #111;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #00ff00;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 Test Aktualizacji Planu w Bazie CV</h1>
+    
+    <!-- Symulowana nawigacja jak w baza_cv_new.html -->
+    <nav>
+        <ul class="nav-menu">
+            <li>🏠 Strona główna</li>
+            <li>💼 Oferty pracy</li>
+            <li>📞 Kontakt</li>
+            <li id="userWelcome" style="color: #00ff00; font-weight: bold;"></li>
+            <li id="userPlan" style="color: #00fff7; font-weight: bold; margin-left: 1rem;"></li>
+        </ul>
+    </nav>
+    
+    <div class="test-section">
+        <h2>🔧 Panel Testowy</h2>
+        
+        <h3>1. Symulacja logowania z różnymi planami:</h3>
+        <button onclick="simulateLogin('Premium')">Zaloguj jako Premium ⭐</button>
+        <button onclick="simulateLogin('Business')">Zaloguj jako Business 🏢</button>
+        <button onclick="simulateLogin('Enterprise')">Zaloguj jako Enterprise 💎</button>
+        <button onclick="simulateLogin('Bezpłatny')">Zaloguj jako FREE 🆓</button>
+        
+        <h3>2. Zmiana planu dla zalogowanego użytkownika:</h3>
+        <button onclick="changePlan('Premium')">Zmień na Premium ⭐</button>
+        <button onclick="changePlan('Business')">Zmień na Business 🏢</button>
+        <button onclick="changePlan('Enterprise')">Zmień na Enterprise 💎</button>
+        
+        <h3>3. Kontrola i debug:</h3>
+        <button onclick="showCurrentStatus()">📊 Pokaż Status</button>
+        <button onclick="testUpdateFunction()">🔄 Test Aktualizacji</button>
+        <button onclick="clearUser()">🗑️ Wyczyść Użytkownika</button>
+    </div>
+    
+    <div class="status-display">
+        <h3>📊 Aktualny Status:</h3>
+        <div id="statusDisplay">Ładowanie...</div>
+    </div>
+    
+    <div class="status-display">
+        <h3>🔍 Elementy DOM:</h3>
+        <div id="domStatus">Sprawdzanie...</div>
+    </div>
+
+    <script>
+        // Functions to update user plan display (same as in baza_cv_new.html)
+        function updateUserPlanDisplay() {
+            const userData = sessionStorage.getItem('currentUser');
+            if (!userData) {
+                document.getElementById('userWelcome').innerHTML = '';
+                document.getElementById('userPlan').innerHTML = '';
+                updateStatusDisplay();
+                return;
+            }
+            
+            let user;
+            try {
+                user = JSON.parse(userData);
+            } catch (e) {
+                console.error('Error parsing user data:', e);
+                return;
+            }
+            
+            const userInfo = document.getElementById('userWelcome');
+            const userPlan = document.getElementById('userPlan');
+            
+            if (userInfo) {
+                userInfo.innerHTML = `<span style="color: #00ff00;">👋 Witaj, ${user.name || user.email}!</span>`;
+            }
+            
+            if (userPlan) {
+                const planIcon = user.plan === 'Enterprise' ? '💎' : 
+                                user.plan === 'Business' ? '🏢' : 
+                                user.plan === 'Premium' ? '⭐' : '🆓';
+                userPlan.innerHTML = `<span style="color: #00fff7;">📋 ${planIcon} ${user.plan || 'FREE'}</span>`;
+            }
+            
+            console.log('✅ User plan updated in display:', user.plan);
+            updateStatusDisplay();
+        }
+        
+        // Test functions
+        function simulateLogin(plan) {
+            const userData = {
+                email: 'test@ecvjob.pl',
+                name: 'Test User',
+                plan: plan,
+                loginTime: new Date().toISOString()
+            };
+            
+            sessionStorage.setItem('currentUser', JSON.stringify(userData));
+            localStorage.setItem('isLoggedIn', 'true');
+            
+            console.log('🧪 Simulated login with plan:', plan);
+            updateUserPlanDisplay();
+        }
+        
+        function changePlan(newPlan) {
+            const userData = sessionStorage.getItem('currentUser');
+            if (!userData) {
+                alert('Musisz być zalogowany aby zmienić plan!');
+                return;
+            }
+            
+            const user = JSON.parse(userData);
+            const oldPlan = user.plan;
+            user.plan = newPlan;
+            sessionStorage.setItem('currentUser', JSON.stringify(user));
+            
+            console.log('🔄 Plan changed from', oldPlan, 'to', newPlan);
+            updateUserPlanDisplay();
+            
+            alert(`Plan zaktualizowany z ${oldPlan} na ${newPlan}`);
+        }
+        
+        function showCurrentStatus() {
+            const userData = sessionStorage.getItem('currentUser');
+            const isLoggedIn = localStorage.getItem('isLoggedIn');
+            
+            if (userData) {
+                const user = JSON.parse(userData);
+                alert(`Status użytkownika:
+Email: ${user.email}
+Imię: ${user.name || 'Brak'}
+Plan: ${user.plan || 'Brak'}
+Zalogowany: ${isLoggedIn === 'true' ? 'TAK' : 'NIE'}`);
+            } else {
+                alert('Brak danych użytkownika');
+            }
+        }
+        
+        function testUpdateFunction() {
+            console.log('🧪 Testing update function...');
+            updateUserPlanDisplay();
+            alert('Funkcja aktualizacji została wywołana - sprawdź konsolę i wyświetlanie');
+        }
+        
+        function clearUser() {
+            sessionStorage.removeItem('currentUser');
+            localStorage.removeItem('isLoggedIn');
+            updateUserPlanDisplay();
+            alert('Dane użytkownika zostały wyczyszczone');
+        }
+        
+        function updateStatusDisplay() {
+            const statusDiv = document.getElementById('statusDisplay');
+            const domDiv = document.getElementById('domStatus');
+            const userData = sessionStorage.getItem('currentUser');
+            const isLoggedIn = localStorage.getItem('isLoggedIn');
+            
+            let status = `Zalogowany: ${isLoggedIn === 'true' ? 'TAK' : 'NIE'}<br>`;
+            
+            if (userData) {
+                try {
+                    const user = JSON.parse(userData);
+                    status += `Email: ${user.email}<br>`;
+                    status += `Imię: ${user.name || 'Brak'}<br>`;
+                    status += `Plan: ${user.plan || 'Brak'}<br>`;
+                    
+                    const planIcon = user.plan === 'Enterprise' ? '💎' : 
+                                    user.plan === 'Business' ? '🏢' : 
+                                    user.plan === 'Premium' ? '⭐' : '🆓';
+                    status += `Ikona: ${planIcon}<br>`;
+                } catch (e) {
+                    status += `Błąd parsowania danych: ${e.message}<br>`;
+                }
+            } else {
+                status += `Brak danych użytkownika<br>`;
+            }
+            
+            statusDiv.innerHTML = status;
+            
+            // DOM status
+            const userWelcomeEl = document.getElementById('userWelcome');
+            const userPlanEl = document.getElementById('userPlan');
+            
+            let domStatus = `Element userWelcome: ${userWelcomeEl ? 'ZNALEZIONY' : 'BRAK'}<br>`;
+            domStatus += `Zawartość userWelcome: "${userWelcomeEl?.innerHTML || 'PUSTE'}"<br>`;
+            domStatus += `Element userPlan: ${userPlanEl ? 'ZNALEZIONY' : 'BRAK'}<br>`;
+            domStatus += `Zawartość userPlan: "${userPlanEl?.innerHTML || 'PUSTE'}"<br>`;
+            
+            domDiv.innerHTML = domStatus;
+        }
+        
+        // Monitor storage changes
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'currentUser') {
+                console.log('🔄 Storage event detected, updating display');
+                setTimeout(updateUserPlanDisplay, 100);
+            }
+        });
+        
+        // Override sessionStorage.setItem to catch same-tab changes
+        const originalSetItem = sessionStorage.setItem;
+        sessionStorage.setItem = function(key, value) {
+            originalSetItem.apply(this, arguments);
+            if (key === 'currentUser') {
+                console.log('🔄 sessionStorage.setItem detected for currentUser');
+                setTimeout(updateUserPlanDisplay, 100);
+            }
+        };
+        
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            updateUserPlanDisplay();
+            updateStatusDisplay();
+            
+            // Update every 2 seconds
+            setInterval(() => {
+                updateStatusDisplay();
+            }, 2000);
+        });
+        
+        // Expose functions globally
+        window.updateUserPlanDisplay = updateUserPlanDisplay;
+    </script>
+</body>
+</html>

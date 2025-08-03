@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔧 Instrukcja Testowania - Plan Synchronization</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #1a1a1a;
+            color: #00ff00;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        .step {
+            background: #2a2a2a;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 8px;
+            border-left: 4px solid #00ff00;
+        }
+        .step h3 {
+            color: #00fff7;
+            margin-top: 0;
+        }
+        .code {
+            background: #0a0a0a;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            color: #ffff00;
+            margin: 10px 0;
+        }
+        .warning {
+            background: #332200;
+            border-left-color: #ffaa00;
+            color: #ffaa00;
+        }
+        .success {
+            background: #003322;
+            border-left-color: #00ff00;
+            color: #00ff00;
+        }
+        .error {
+            background: #330000;
+            border-left-color: #ff0000;
+            color: #ff0000;
+        }
+        button {
+            background: #00ff00;
+            color: #000;
+            border: none;
+            padding: 12px 20px;
+            margin: 10px 5px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        button:hover {
+            background: #00cc00;
+        }
+        .quick-links {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Instrukcja Testowania - Plan Synchronization</h1>
+        
+        <div class="step success">
+            <h3>🚀 Szybkie linki do testowania</h3>
+            <div class="quick-links">
+                <button onclick="openPage('baza_cv_new.html')">📄 Główna strona (baza_cv_new.html)</button>
+                <button onclick="openPage('problem-simulator.html')">🔬 Symulator problemu</button>
+                <button onclick="openPage('debug-final-check.html')">🔍 Debug checker</button>
+                <button onclick="openConsole()">🛠️ Otwórz konsolę deweloperską</button>
+            </div>
+        </div>
+
+        <div class="step">
+            <h3>📋 Krok 1: Przygotowanie do testów</h3>
+            <p>1. <strong>Otwórz konsolę deweloperską</strong> (F12 w przeglądarce)</p>
+            <p>2. <strong>Przejdź na zakładkę Console</strong></p>
+            <p>3. <strong>Wyczyść konsolę</strong> (Ctrl+L lub przycisk Clear)</p>
+            <div class="code">
+                Teraz wszystkie logi będą widoczne w konsoli deweloperskiej
+            </div>
+        </div>
+
+        <div class="step">
+            <h3>🧪 Krok 2: Test z Symulatorem Problemu</h3>
+            <p>1. <strong>Otwórz problem-simulator.html</strong></p>
+            <p>2. <strong>Kliknij "Ustaw Premium"</strong> - sprawdź czy wszystko się synchronizuje</p>
+            <p>3. <strong>Kliknij "🚨 SYMULUJ PROBLEM"</strong> - to odtworzy sytuację z różnymi planami</p>
+            <p>4. <strong>Obserwuj logi</strong> - czy pokazuje "PROBLEM: SessionStorage ma Enterprise, ale userPlan pokazuje Premium"</p>
+            <p>5. <strong>Kliknij "🔄 Wymuś synchronizację"</strong> - sprawdź czy to naprawia problem</p>
+        </div>
+
+        <div class="step">
+            <h3>🎯 Krok 3: Test na głównej stronie</h3>
+            <p>1. <strong>Otwórz baza_cv_new.html</strong></p>
+            <p>2. <strong>W konsoli</strong> ustaw dane użytkownika:</p>
+            <div class="code">
+sessionStorage.setItem('currentUser', JSON.stringify({
+    name: 'Test User',
+    email: 'test@example.com', 
+    plan: 'Premium'
+}));
+            </div>
+            <p>3. <strong>Odśwież stronę</strong> (F5)</p>
+            <p>4. <strong>Obserwuj logi</strong> - szczególnie zwróć uwagę na:</p>
+            <ul>
+                <li>Czy ultimatePlanSync() jest wywoływana wielokrotnie</li>
+                <li>Czy są jakieś niespodziewane zmiany w DOM</li>
+                <li>Czy sessionStorage się zmienia</li>
+            </ul>
+        </div>
+
+        <div class="step">
+            <h3>🔍 Krok 4: Debugowanie w czasie rzeczywistym</h3>
+            <p>W konsoli dostępne są funkcje:</p>
+            <div class="code">
+// Pokaż aktualny stan
+debugUserState()
+
+// Wymuś synchronizację
+forcePlanSync()
+
+// Zmień plan testowo
+testPlanChange('Enterprise')
+            </div>
+        </div>
+
+        <div class="step warning">
+            <h3>⚠️ Na co zwrócić uwagę</h3>
+            <p><strong>Szukaj w logach:</strong></p>
+            <ul>
+                <li>🔴 <strong>"NIEZGODNOŚĆ PLANU"</strong> - to oznacza problem!</li>
+                <li>🔄 <strong>Wielokrotne wywołania ultimatePlanSync()</strong></li>
+                <li>🎯 <strong>Call stack</strong> - skąd pochodzi wywołanie</li>
+                <li>📋 <strong>Zmiany DOM</strong> - czy ktoś modyfikuje elementy bezpośrednio</li>
+            </ul>
+        </div>
+
+        <div class="step">
+            <h3>🚨 Krok 5: Reprodukcja problemu z życia</h3>
+            <p>Aby odtworzyć dokładnie problem "dalej w jednym miejscu jest premium a w drugim enterprise":</p>
+            <div class="code">
+// 1. Ustaw Premium
+sessionStorage.setItem('currentUser', JSON.stringify({
+    name: 'Test User', 
+    email: 'test@example.com', 
+    plan: 'Premium'
+}));
+
+// 2. Poczekaj 2 sekundy, potem zmień na Enterprise
+setTimeout(() => {
+    sessionStorage.setItem('currentUser', JSON.stringify({
+        name: 'Test User',
+        email: 'test@example.com', 
+        plan: 'Enterprise'  
+    }));
+}, 2000);
+            </div>
+            <p>Wykonaj ten kod w konsoli i obserwuj czy elementy się prawidłowo synchronizują.</p>
+        </div>
+
+        <div class="step success">
+            <h3>✅ Oczekiwane rezultaty</h3>
+            <p><strong>Jeśli wszystko działa poprawnie:</strong></p>
+            <ul>
+                <li>Elementy userWelcome i userPlan pokazują te same dane</li>
+                <li>Zmiany w sessionStorage od razu aktualizują wyświetlanie</li>
+                <li>ultimatePlanSync() wykonuje się bez błędów</li>
+            </ul>
+            
+            <p><strong>Jeśli występuje problem:</strong></p>
+            <ul>
+                <li>userWelcome pokazuje jeden plan, userPlan inny</li>
+                <li>Logi pokazują "NIEZGODNOŚĆ PLANU"</li>
+                <li>Call stack pomoże znaleźć źródło problemu</li>
+            </ul>
+        </div>
+
+        <div class="step error">
+            <h3>🔧 Jak naprawić wykryty problem</h3>
+            <p>Jeśli znajdziesz problem w logach:</p>
+            <ol>
+                <li><strong>Sprawdź call stack</strong> - skąd pochodzi niewłaściwe wywołanie</li>
+                <li><strong>Szukaj funkcji</strong> która modyfikuje DOM lub sessionStorage</li>
+                <li><strong>Dodaj console.log</strong> w podejrzanych miejscach</li>
+                <li><strong>Wyłącz czasowo</strong> automatyczne odświeżanie (setInterval)</li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        function openPage(filename) {
+            const url = `file:///c:/serwer/htdocs/moj_projek/eCVjob.pl/src/${filename}`;
+            window.open(url, '_blank');
+        }
+        
+        function openConsole() {
+            alert('Naciśnij F12 aby otworzyć konsolę deweloperską, następnie przejdź na zakładkę "Console"');
+        }
+        
+        // Auto-setup dla testów
+        window.setupQuickTest = function() {
+            // Ustaw dane testowe
+            sessionStorage.setItem('currentUser', JSON.stringify({
+                name: 'Test User',
+                email: 'test@example.com',
+                plan: 'Premium'
+            }));
+            
+            console.log('✅ Ustawiono dane testowe w sessionStorage');
+            console.log('🔄 Teraz otwórz baza_cv_new.html aby zobaczyć czy synchronizacja działa');
+        };
+        
+        window.simulateProblem = function() {
+            console.log('🚨 Symulacja problemu z różnymi planami...');
+            
+            // Ustaw Premium
+            sessionStorage.setItem('currentUser', JSON.stringify({
+                name: 'Test User',
+                email: 'test@example.com',
+                plan: 'Premium'
+            }));
+            
+            console.log('1. Ustawiono Premium');
+            
+            // Po 3 sekundach zmień na Enterprise
+            setTimeout(() => {
+                sessionStorage.setItem('currentUser', JSON.stringify({
+                    name: 'Test User',
+                    email: 'test@example.com',
+                    plan: 'Enterprise'
+                }));
+                console.log('2. Zmieniono na Enterprise - sprawdź czy strona się aktualizuje!');
+            }, 3000);
+        };
+        
+        console.log('🔧 Instrukcja testowania załadowana!');
+        console.log('💡 Dostępne funkcje:');
+        console.log('   setupQuickTest() - ustaw dane testowe');
+        console.log('   simulateProblem() - symuluj problem z różnymi planami');
+    </script>
+</body>
+</html>

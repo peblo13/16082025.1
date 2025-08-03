@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Symulator Problemu - Dwa Różne Plany</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #1a1a1a;
+            color: #00ff00;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .status {
+            background: #2a2a2a;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border: 1px solid #00ff00;
+        }
+        .error {
+            border-color: #ff0000;
+            color: #ff0000;
+        }
+        .warning {
+            border-color: #ffaa00;
+            color: #ffaa00;
+        }
+        .success {
+            border-color: #00ff00;
+            color: #00ff00;
+        }
+        button {
+            background: #00ff00;
+            color: #000;
+            border: none;
+            padding: 10px 15px;
+            margin: 5px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #00cc00;
+        }
+        .user-display {
+            background: #0a0a0a;
+            padding: 20px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border: 2px solid #333;
+        }
+        .user-display h3 {
+            margin-top: 0;
+            color: #00fff7;
+        }
+        #userWelcome {
+            color: #00ff00;
+            font-weight: bold;
+            font-size: 1.2em;
+            margin-bottom: 10px;
+        }
+        #userPlan {
+            color: #00fff7;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Symulator Problemu - Dwa Różne Plany</h1>
+        
+        <div class="status">
+            <h3>📊 Problem:</h3>
+            <p>Ta strona symuluje sytuację gdzie userWelcome i userPlan mogą pokazywać różne informacje.</p>
+        </div>
+        
+        <div class="user-display">
+            <h3>🧑 Wyświetlanie użytkownika (jak w baza_cv_new.html):</h3>
+            <div id="userWelcome"></div>
+            <div id="userPlan"></div>
+        </div>
+        
+        <div class="status">
+            <h3>🎮 Kontrolki testowe:</h3>
+            <button onclick="setUserData('Premium')">Ustaw Premium</button>
+            <button onclick="setUserData('Enterprise')">Ustaw Enterprise</button>
+            <button onclick="setUserData('Business')">Ustaw Business</button>
+            <button onclick="simulateProblem()">🚨 SYMULUJ PROBLEM</button>
+            <button onclick="forceSync()">🔄 Wymuś synchronizację</button>
+            <button onclick="clearAll()">🗑️ Wyczyść wszystko</button>
+        </div>
+        
+        <div class="status">
+            <h3>📋 Status w czasie rzeczywistym:</h3>
+            <div id="realTimeStatus">Sprawdzanie...</div>
+        </div>
+        
+        <div class="status">
+            <h3>🔍 Logi:</h3>
+            <div id="logs" style="max-height: 300px; overflow-y: auto; font-family: monospace; font-size: 12px;"></div>
+        </div>
+    </div>
+
+    <script>
+        let logBuffer = [];
+        
+        function log(message) {
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = `[${timestamp}] ${message}`;
+            logBuffer.push(logEntry);
+            if (logBuffer.length > 100) logBuffer.shift();
+            
+            document.getElementById('logs').innerHTML = logBuffer.map(l => `<div>${l}</div>`).join('');
+            console.log(logEntry);
+        }
+        
+        // Dokładnie taka sama funkcja jak w baza_cv_new.html
+        function ultimatePlanSync() {
+            log('🎯 !!!! ULTIMATE SYNC CALLED !!!!');
+            
+            // Get fresh data from sessionStorage
+            const userData = sessionStorage.getItem('currentUser');
+            log('🎯 ULTIMATE SYNC: Raw sessionStorage data: ' + userData);
+            
+            if (!userData) {
+                log('❌ ULTIMATE SYNC: No user data found');
+                // Clear both elements
+                const userInfo = document.getElementById('userWelcome');
+                const userPlan = document.getElementById('userPlan');
+                if (userInfo) userInfo.innerHTML = '';
+                if (userPlan) userPlan.innerHTML = '';
+                return;
+            }
+            
+            let user;
+            try {
+                user = JSON.parse(userData);
+            } catch (e) {
+                log('❌ ULTIMATE SYNC: Error parsing user data: ' + e);
+                return;
+            }
+            
+            log('🎯 ULTIMATE SYNC: Fresh user data: ' + JSON.stringify(user));
+            log('🎯 ULTIMATE SYNC: Current plan from data: ' + user.plan);
+            
+            // Find ALL elements that might show user info
+            const userInfo = document.getElementById('userWelcome');
+            const userPlan = document.getElementById('userPlan');
+            
+            log('🎯 ULTIMATE SYNC: Found elements: userInfo=' + (userInfo ? 'FOUND' : 'NOT FOUND') + ', userPlan=' + (userPlan ? 'FOUND' : 'NOT FOUND'));
+            
+            // Force clear and rebuild both elements
+            if (userInfo) {
+                log('🎯 ULTIMATE SYNC: Before clearing userWelcome: ' + userInfo.innerHTML);
+                userInfo.innerHTML = ''; // Clear first
+                const welcomeText = `<span style="color: #00ff00;">👋 Witaj, ${user.name || user.email}!</span>`;
+                userInfo.innerHTML = welcomeText;
+                log('✅ ULTIMATE SYNC: Set userWelcome to: ' + welcomeText);
+                log('🎯 ULTIMATE SYNC: After setting userWelcome: ' + userInfo.innerHTML);
+            } else {
+                log('⚠️ ULTIMATE SYNC: userWelcome element not found');
+            }
+            
+            if (userPlan) {
+                log('🎯 ULTIMATE SYNC: Before clearing userPlan: ' + userPlan.innerHTML);
+                userPlan.innerHTML = ''; // Clear first
+                const planIcon = user.plan === 'Enterprise' ? '💎' : 
+                                user.plan === 'Business' ? '🏢' : 
+                                user.plan === 'Premium' ? '⭐' : '🆓';
+                const planText = `<span style="color: #00fff7;">📋 ${planIcon} ${user.plan || 'FREE'}</span>`;
+                userPlan.innerHTML = planText;
+                log('✅ ULTIMATE SYNC: Set userPlan to: ' + planText);
+                log('🎯 ULTIMATE SYNC: After setting userPlan: ' + userPlan.innerHTML);
+            } else {
+                log('⚠️ ULTIMATE SYNC: userPlan element not found');
+            }
+            
+            // Force DOM update
+            if (userInfo) userInfo.style.display = 'none'; 
+            if (userPlan) userPlan.style.display = 'none';
+            setTimeout(() => {
+                if (userInfo) userInfo.style.display = '';
+                if (userPlan) userPlan.style.display = '';
+                log('🎯 ULTIMATE SYNC: DOM refresh completed');
+            }, 10);
+            
+            log('🎉 ULTIMATE SYNC: Synchronization complete for plan: ' + user.plan);
+        }
+        
+        function setUserData(plan) {
+            const userData = {
+                name: 'Test User',
+                email: 'test@example.com',
+                plan: plan
+            };
+            sessionStorage.setItem('currentUser', JSON.stringify(userData));
+            log('🔄 Ustawiono plan: ' + plan);
+            ultimatePlanSync();
+            updateRealTimeStatus();
+        }
+        
+        function simulateProblem() {
+            log('🚨 SYMULACJA PROBLEMU - ustawiam różne wartości bezpośrednio w DOM');
+            
+            const userInfo = document.getElementById('userWelcome');
+            const userPlan = document.getElementById('userPlan');
+            
+            if (userInfo) {
+                userInfo.innerHTML = '<span style="color: #00ff00;">👋 Witaj, Test User!</span>';
+                log('🚨 SYMULACJA: Ustawiono userWelcome na stałe');
+            }
+            
+            if (userPlan) {
+                userPlan.innerHTML = '<span style="color: #00fff7;">📋 ⭐ Premium</span>';
+                log('🚨 SYMULACJA: Ustawiono userPlan na Premium');
+            }
+            
+            // Teraz ustaw w sessionStorage Enterprise
+            const userData = {
+                name: 'Test User',
+                email: 'test@example.com',
+                plan: 'Enterprise'
+            };
+            sessionStorage.setItem('currentUser', JSON.stringify(userData));
+            log('🚨 SYMULACJA: W sessionStorage ustawiono Enterprise');
+            log('🚨 SYMULACJA: Teraz userWelcome pokazuje dane użytkownika, ale userPlan pokazuje Premium, a sessionStorage ma Enterprise!');
+            
+            updateRealTimeStatus();
+        }
+        
+        function forceSync() {
+            log('🔄 Wymuszam synchronizację...');
+            ultimatePlanSync();
+            updateRealTimeStatus();
+        }
+        
+        function clearAll() {
+            sessionStorage.removeItem('currentUser');
+            const userInfo = document.getElementById('userWelcome');
+            const userPlan = document.getElementById('userPlan');
+            if (userInfo) userInfo.innerHTML = '';
+            if (userPlan) userPlan.innerHTML = '';
+            log('🗑️ Wyczyszczono wszystko');
+            updateRealTimeStatus();
+        }
+        
+        function updateRealTimeStatus() {
+            const userData = sessionStorage.getItem('currentUser');
+            const userInfo = document.getElementById('userWelcome');
+            const userPlan = document.getElementById('userPlan');
+            
+            let status = '<div><strong>SessionStorage:</strong> ';
+            if (userData) {
+                const user = JSON.parse(userData);
+                status += `${user.name} (${user.plan})`;
+            } else {
+                status += 'BRAK DANYCH';
+            }
+            status += '</div>';
+            
+            status += '<div><strong>userWelcome wyświetla:</strong> ';
+            status += userInfo ? (userInfo.innerHTML || 'PUSTY') : 'ELEMENT NIE ISTNIEJE';
+            status += '</div>';
+            
+            status += '<div><strong>userPlan wyświetla:</strong> ';
+            status += userPlan ? (userPlan.innerHTML || 'PUSTY') : 'ELEMENT NIE ISTNIEJE';
+            status += '</div>';
+            
+            // Sprawdź zgodność
+            if (userData && userPlan) {
+                const user = JSON.parse(userData);
+                const planContent = userPlan.innerHTML;
+                if (planContent && !planContent.includes(user.plan)) {
+                    status += '<div style="color: #ff0000;"><strong>⚠️ PROBLEM:</strong> SessionStorage ma ' + user.plan + ', ale userPlan pokazuje: ' + planContent + '</div>';
+                } else if (planContent && planContent.includes(user.plan)) {
+                    status += '<div style="color: #00ff00;"><strong>✅ OK:</strong> Plan się zgadza</div>';
+                }
+            }
+            
+            document.getElementById('realTimeStatus').innerHTML = status;
+        }
+        
+        // Monitor sessionStorage changes
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'currentUser') {
+                log('🔄 Wykryto zmianę w sessionStorage (storage event)');
+                updateRealTimeStatus();
+            }
+        });
+        
+        // Override sessionStorage.setItem to catch same-tab changes
+        const originalSetItem = sessionStorage.setItem;
+        sessionStorage.setItem = function(key, value) {
+            originalSetItem.apply(this, arguments);
+            if (key === 'currentUser') {
+                log('🔄 !!!! sessionStorage.setItem detected !!!!');
+                log('🔄 Key: ' + key);
+                log('🔄 New value: ' + value);
+                setTimeout(() => updateRealTimeStatus(), 50);
+            }
+        };
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            log('🚀 Strona załadowana');
+            updateRealTimeStatus();
+        });
+        
+        // Update status every 2 seconds
+        setInterval(updateRealTimeStatus, 2000);
+    </script>
+</body>
+</html>

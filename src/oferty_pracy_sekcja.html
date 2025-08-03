@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Oferty Pracy - Sekcja</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <style>
+        body { background: #181818; color: #fff; font-family: Arial, sans-serif; }
+        .job-search-section { text-align:center; margin-bottom:24px; }
+        .job-search-input { padding:12px 18px; border-radius:8px; border:2px solid #00ff00; font-size:1.1rem; min-width:240px; max-width:420px; width:100%; outline:none; background:#181818; color:#00ff00; }
+        .job-search-btn { background:linear-gradient(90deg,#00ff00 60%,#00cfff 100%); color:#111; border:none; border-radius:8px; font-size:1.1rem; font-weight:bold; padding:12px 28px; cursor:pointer; margin-left:8px; }
+        .job-offers-row { display:flex; flex-direction:row; gap:32px; justify-content:center; align-items:flex-start; margin-bottom:32px; }
+        #job-offers-list { flex:1; max-width:420px; }
+        #city-ranking-table-wrapper { flex:1; max-width:340px; }
+        #city-map-wrapper { flex:1; min-width:320px; min-height:220px; background:#181818; border-radius:12px; box-shadow:0 2px 12px #00cfffaa; display:flex; align-items:center; justify-content:center; position:relative; }
+    </style>
+</head>
+<body>
+    <section class="job-search-section">
+        <input type="text" id="job-search-input" class="job-search-input" placeholder="Szukaj ofert pracy po lokalizacji, stanowisku, firmie...">
+        <button id="job-search-btn" class="job-search-btn">Szukaj</button>
+    </section>
+    <section class="job-offers-row">
+        <div id="job-offers-list"></div>
+        <div id="city-ranking-table-wrapper">
+            <h2 style="color:#00ff00; font-size:1.5rem; text-align:center; margin-bottom:18px; font-weight:bold;">Ranking miast wg liczby ofert</h2>
+            <table id="city-ranking-table" style="width:100%; background:rgba(0,0,0,0.7); border-radius:12px; overflow:hidden; box-shadow:0 2px 12px #00ff00aa; border:2px solid #00ff00;">
+                <thead>
+                    <tr style="background:#111; color:#FFD700; font-size:1.1rem;">
+                        <th style="padding:10px 0;">Miejsce</th>
+                        <th>Miasto</th>
+                        <th>Liczba ofert</th>
+                    </tr>
+                </thead>
+                <tbody id="city-ranking-body"></tbody>
+            </table>
+        </div>
+        <div id="city-map-wrapper"></div>
+    </section>
+    <script>
+        let allOffers = [];
+        let filteredOffers = [];
+        let currentPage = 1;
+        const OFFERS_PER_PAGE = 3;
+
+        function renderOffersPage(page) {
+            const start = (page - 1) * OFFERS_PER_PAGE;
+            const end = start + OFFERS_PER_PAGE;
+            const offers = filteredOffers.slice(start, end);
+            const list = document.getElementById('job-offers-list');
+            list.innerHTML = '';
+            if (offers.length === 0) {
+                list.innerHTML = '<div style="color:#ff2222;font-size:1.2rem;">Brak ofert pracy dla podanych kryteriów.</div>';
+                return;
+            }
+            offers.forEach(offer => {
+                const card = document.createElement('div');
+                card.style = 'background:rgba(0,0,0,0.8);border:2px solid #00ff00;border-radius:14px;box-shadow:0 2px 18px #00ff0033;padding:18px 14px;margin-bottom:18px;color:#fff;';
+                card.innerHTML = `<div style='font-size:1.2rem;font-weight:bold;color:#00ff00;margin-bottom:6px;'>${offer['Stanowisko']||''}</div>
+                    <div style='font-size:1.05rem;color:#fff;margin-bottom:4px;'>${offer['Opis']||''}</div>
+                    <div style='font-size:1.05rem;color:#00cfff;margin-bottom:4px;'>${offer['Miejsce pracy']||''}</div>
+                    <div style='font-size:0.98rem;color:#fff;'>${offer['Pracodawca']||''}</div>`;
+                list.appendChild(card);
+            });
+            renderPagination();
+        }
+
+        function renderPagination() {
+            const list = document.getElementById('job-offers-list');
+            let pag = document.getElementById('job-pagination');
+            if (!pag) {
+                pag = document.createElement('div');
+                pag.id = 'job-pagination';
+                pag.style = 'display:flex;justify-content:center;gap:8px;margin:18px 0;';
+                list.appendChild(pag);
+            }
+            pag.innerHTML = '';
+            const totalPages = Math.max(1, Math.ceil(filteredOffers.length / OFFERS_PER_PAGE));
+            for (let i = 1; i <= totalPages; i++) {
+                const btn = document.createElement('button');
+                btn.textContent = i;
+                btn.style = `padding:7px 16px;border-radius:8px;border:2px solid #00ff00;background:${i===currentPage?'#00ff00':'#181818'};color:${i===currentPage?'#111':'#00ff00'};font-weight:bold;cursor:pointer;`;
+                btn.disabled = i === currentPage;
+                btn.onclick = function() {
+                    currentPage = i;
+                    renderOffersPage(currentPage);
+                };
+                pag.appendChild(btn);
+            }
+        }
+
+        function renderRankingAndMap() {
+            // Ranking miast
+            const ranking = {};
+            filteredOffers.forEach(offer => {
+                const city = (offer['Miejsce pracy'] || '').trim();
+                if (!city) return;
+                ranking[city] = (ranking[city] || 0) + 1;
+            });
+            const sorted = Object.entries(ranking)
+                .map(([miasto, ilosc]) => ({ miasto, ilosc }))
+                .sort((a, b) => b.ilosc - a.ilosc);
+            // Tabela
+            const tbody = document.getElementById('city-ranking-body');
+            tbody.innerHTML = '';
+            sorted.forEach((row, idx) => {
+                const tr = document.createElement('tr');
+                let style = '';
+                let place = idx + 1;
+                let icon = '';
+                if (idx === 0) {
+                    style = 'background:#FFD70022; color:#FFD700; font-weight:bold;';
+                    icon = '🏆';
+                }
+                tr.innerHTML = `<td style='padding:8px 0;${style}'>${icon ? icon + ' ' : ''}${place}</td><td style='${style}'>${row.miasto}</td><td style='${style}'>${row.ilosc}</td>`;
+                tbody.appendChild(tr);
+            });
+            // Mapka
+            const map = document.getElementById('city-map-wrapper');
+            map.innerHTML = '';
+            sorted.forEach((row, idx) => {
+                const marker = document.createElement('div');
+                marker.style = 'display:inline-block;margin:18px;position:relative;';
+                marker.innerHTML = `
+                    <span style="font-size:2.2em;color:${idx===0?'#FFD700':'#00cfff'};">📍</span>
+                    <span style="position:absolute;top:-18px;left:18px;font-size:1.3em;color:${idx===0?'#FFD700':'#ffe600'};font-weight:bold;text-shadow:0 2px 8px #222;">${row.ilosc}</span>
+                    <div style="font-size:0.95em;color:#fff;text-align:center;">${row.miasto}</div>
+                `;
+                map.appendChild(marker);
+            });
+        }
+
+        function filterOffers() {
+            const q = (document.getElementById('job-search-input')?.value || '').toLowerCase().trim();
+            if (!q) {
+                filteredOffers = allOffers.slice();
+            } else {
+                filteredOffers = allOffers.filter(offer => {
+                    return (
+                        (offer['Stanowisko']||'').toLowerCase().includes(q) ||
+                        (offer['Opis']||'').toLowerCase().includes(q) ||
+                        (offer['Miejsce pracy']||'').toLowerCase().includes(q) ||
+                        (offer['Pracodawca']||'').toLowerCase().includes(q)
+                    );
+                });
+            }
+            currentPage = 1;
+            renderOffersPage(currentPage);
+            renderRankingAndMap();
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            if (window.Papa) {
+                Papa.parse('praca_baza.csv', {
+                    download: true,
+                    header: true,
+                    delimiter: ';',
+                    skipEmptyLines: true,
+                    complete: function(results) {
+                        allOffers = results.data;
+                        filteredOffers = allOffers.slice();
+                        renderOffersPage(currentPage);
+                        renderRankingAndMap();
+                    },
+                    error: function(err) {
+                        alert('Błąd ładowania pliku ofert pracy: ' + err);
+                    }
+                });
+            } else {
+                console.error('PapaParse nie jest załadowany!');
+            }
+            document.getElementById('job-search-btn').addEventListener('click', filterOffers);
+            document.getElementById('job-search-input').addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') filterOffers();
+            });
+        });
+    </script>
+</body>
+</html>

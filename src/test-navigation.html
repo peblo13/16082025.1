@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Nawigacji - Plan Updates</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            background: #000; 
+            color: #fff; 
+            padding: 20px; 
+        }
+        .nav-list { 
+            list-style: none; 
+            display: flex; 
+            gap: 20px; 
+            background: #222; 
+            padding: 10px; 
+            border-radius: 8px;
+        }
+        .nav-list li a { 
+            color: #00ff00; 
+            text-decoration: none; 
+            font-weight: bold;
+        }
+        button { 
+            background: #00ff00; 
+            color: #000; 
+            border: none; 
+            padding: 10px 20px; 
+            margin: 10px; 
+            border-radius: 5px; 
+            cursor: pointer; 
+        }
+        .test-section { 
+            background: #222; 
+            padding: 20px; 
+            margin: 20px 0; 
+            border-radius: 8px; 
+        }
+    </style>
+</head>
+<body>
+    <h1>🔧 Test Aktualizacji Planu w Nawigacji</h1>
+    
+    <nav>
+        <ul class="nav-list">
+            <li><a href="index.html">Strona główna</a></li>
+            <li><a href="#" onclick="handleLogin(); return false;">Logowanie</a></li>
+            <li><a href="#" onclick="handleRegistration(); return false;">Rejestracja</a></li>
+        </ul>
+    </nav>
+    
+    <div class="test-section">
+        <h2>🧪 Testy Funkcjonalności</h2>
+        
+        <h3>1. Symulacja logowania z różnymi planami:</h3>
+        <button onclick="testLogin('Premium')">Zaloguj jako Premium</button>
+        <button onclick="testLogin('Business')">Zaloguj jako Business</button>
+        <button onclick="testLogin('Enterprise')">Zaloguj jako Enterprise</button>
+        <button onclick="testLogin('Bezpłatny')">Zaloguj jako FREE</button>
+        
+        <h3>2. Zmiana planu dla zalogowanego użytkownika:</h3>
+        <button onclick="choosePremiumPlan('Premium')">Zmień na Premium</button>
+        <button onclick="choosePremiumPlan('Business')">Zmień na Business</button>
+        <button onclick="choosePremiumPlan('Enterprise')">Zmień na Enterprise</button>
+        
+        <h3>3. Debug i status:</h3>
+        <button onclick="debugNavigation()">🔍 Debug Nawigacji</button>
+        <button onclick="checkUserStatus()">👤 Sprawdź Status</button>
+        <button onclick="logout()">🚪 Wyloguj</button>
+    </div>
+    
+    <div class="test-section">
+        <h3>📊 Status:</h3>
+        <div id="status-output" style="background: #111; padding: 10px; border-radius: 5px; font-family: monospace;"></div>
+    </div>
+
+    <script>
+        // Importuj funkcje z głównej strony
+        function testLogin(plan) {
+            const userData = {
+                email: 'test@ecvjob.pl',
+                name: 'Test User',
+                plan: plan,
+                loginTime: new Date().toISOString()
+            };
+            
+            sessionStorage.setItem('currentUser', JSON.stringify(userData));
+            localStorage.setItem('isLoggedIn', 'true');
+            
+            console.log('✅ Test login with plan:', plan);
+            updateNavigationForLoggedUser();
+            updateStatus();
+        }
+        
+        function choosePremiumPlan(planName) {
+            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+            const userData = sessionStorage.getItem('currentUser');
+            
+            if (isLoggedIn && userData) {
+                const user = JSON.parse(userData);
+                const oldPlan = user.plan;
+                user.plan = planName;
+                sessionStorage.setItem('currentUser', JSON.stringify(user));
+                
+                console.log('✅ Plan updated from:', oldPlan, 'to:', planName);
+                updateNavigationForLoggedUser();
+                updateStatus();
+                
+                alert(`Plan zaktualizowany z ${oldPlan} na ${planName}`);
+            } else {
+                alert('Musisz być zalogowany aby zmienić plan!');
+            }
+        }
+        
+        function updateNavigationForLoggedUser() {
+            console.log('🔄 Updating navigation...');
+            
+            const navList = document.querySelector('.nav-list');
+            if (!navList) {
+                console.warn('⚠️ Navigation list not found');
+                return;
+            }
+            
+            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+            const userData = sessionStorage.getItem('currentUser');
+            
+            if (isLoggedIn && userData) {
+                const user = JSON.parse(userData);
+                console.log('📊 Current user data:', user);
+                
+                // Usuń stare elementy
+                const elementsToRemove = [
+                    'a[onclick*="handleLogin"]',
+                    'a[onclick*="handleRegistration"]',
+                    'a[href="moj-profil.html"]',
+                    'a[onclick*="logout"]'
+                ];
+                
+                elementsToRemove.forEach(selector => {
+                    const elements = navList.querySelectorAll(selector);
+                    elements.forEach(el => {
+                        if (el.parentElement) {
+                            el.parentElement.remove();
+                        }
+                    });
+                });
+                
+                // Dodaj nowe elementy z aktualnym planem
+                const profileLi = document.createElement('li');
+                const planIcon = user.plan === 'Enterprise' ? '💎' : 
+                                user.plan === 'Business' ? '🏢' : 
+                                user.plan === 'Premium' ? '⭐' : '🆓';
+                
+                const planDisplayName = user.plan || 'FREE';
+                const userName = user.name || 'Profil';
+                
+                profileLi.innerHTML = `<a href="moj-profil.html" style="color: #00ff00; font-weight: bold;">👤 ${userName} ${planIcon} ${planDisplayName}</a>`;
+                
+                const logoutLi = document.createElement('li');
+                logoutLi.innerHTML = `<a href="#" onclick="logout(); return false;" style="color: #ff6666;">🚪 Wyloguj</a>`;
+                
+                navList.appendChild(profileLi);
+                navList.appendChild(logoutLi);
+                
+                console.log('✅ Navigation updated for logged user:', user.email, 'Plan:', user.plan, 'Icon:', planIcon);
+            } else {
+                console.log('ℹ️ User not logged in, navigation not updated');
+            }
+        }
+        
+        function debugNavigation() {
+            const navList = document.querySelector('.nav-list');
+            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+            const userData = sessionStorage.getItem('currentUser');
+            
+            console.log('=== DEBUG NAWIGACJI ===');
+            console.log('NavList element:', navList);
+            console.log('Is logged in:', isLoggedIn);
+            console.log('User data:', userData);
+            
+            if (userData) {
+                const user = JSON.parse(userData);
+                console.log('Current plan:', user.plan);
+                console.log('User name:', user.name);
+            }
+            
+            if (navList) {
+                console.log('Current navigation items:');
+                navList.querySelectorAll('li').forEach((li, index) => {
+                    console.log(`  ${index + 1}. ${li.innerHTML}`);
+                });
+            }
+            console.log('======================');
+        }
+        
+        function checkUserStatus() {
+            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+            const userData = sessionStorage.getItem('currentUser');
+            
+            if (isLoggedIn && userData) {
+                const user = JSON.parse(userData);
+                alert(`Zalogowany jako: ${user.name}\nPlan: ${user.plan}\nEmail: ${user.email}`);
+            } else {
+                alert('Nie jesteś zalogowany');
+            }
+            updateStatus();
+        }
+        
+        function logout() {
+            if (confirm('Czy na pewno chcesz się wylogować?')) {
+                sessionStorage.removeItem('currentUser');
+                localStorage.removeItem('isLoggedIn');
+                alert('Zostałeś wylogowany!');
+                location.reload();
+            }
+        }
+        
+        function updateStatus() {
+            const statusDiv = document.getElementById('status-output');
+            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+            const userData = sessionStorage.getItem('currentUser');
+            
+            let status = `Zalogowany: ${isLoggedIn ? 'TAK' : 'NIE'}\n`;
+            
+            if (isLoggedIn && userData) {
+                const user = JSON.parse(userData);
+                status += `Użytkownik: ${user.name}\n`;
+                status += `Email: ${user.email}\n`;
+                status += `Plan: ${user.plan}\n`;
+                status += `Ikona: ${user.plan === 'Enterprise' ? '💎' : user.plan === 'Business' ? '🏢' : user.plan === 'Premium' ? '⭐' : '🆓'}\n`;
+            }
+            
+            statusDiv.textContent = status;
+        }
+        
+        // Inicjalizacja
+        document.addEventListener('DOMContentLoaded', function() {
+            updateNavigationForLoggedUser();
+            updateStatus();
+        });
+    </script>
+</body>
+</html>
