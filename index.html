@@ -10,7 +10,7 @@ y<!DOCTYPE html>
     <!-- Preload critical resources -->
     <link rel="preload" href="./css/optimized-styles.css" as="style">
     <link rel="preload" href="./js/optimized-app.js" as="script">
-    <link rel="preload" href="./images/tlo.jpg" as="image">
+    <link rel="preload" href="./src/images/tlo.jpg" as="image">
     
     <!-- Critical CSS -->
     <link rel="stylesheet" href="./css/optimized-styles.css">
@@ -37,7 +37,7 @@ y<!DOCTYPE html>
     <script>
         // Critical CSS inline (najważniejsze style załadowane natychmiast)
         const criticalCSS = `
-            body{font-family:Arial,sans-serif;background:url('images/tlo.jpg') no-repeat center center fixed;background-size:cover;min-height:100vh;color:#fff;margin:0;padding:0}
+            body{font-family:Arial,sans-serif;background:url('src/images/tlo.jpg') no-repeat center center fixed;background-size:cover;min-height:100vh;color:#fff;margin:0;padding:0}
             .main-nav{width:100vw;background:rgba(0,0,0,.85);box-shadow:0 2px 18px #00ff0033;position:relative;z-index:100}
             .nav-list{list-style:none;display:flex;flex-wrap:wrap;gap:.5rem 1.2rem;margin:0;padding:0}
             .nav-list li a{color:#fff;text-decoration:none;font-weight:500;padding:10px 14px;border-radius:8px;transition:all .2s}
@@ -62,7 +62,7 @@ y<!DOCTYPE html>
 
     <style>
       body {
-        background: url('images/tlo.jpg') no-repeat center center fixed;
+        background: url('src/images/tlo.jpg') no-repeat center center fixed;
         background-size: cover;
       }
       
