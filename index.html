@@ -2826,6 +2826,13 @@ document.addEventListener('DOMContentLoaded', function() {
         let filteredOffers = [];
         let currentPage = 1;
         let totalPages = 1;
+        
+        // Ustaw licznik na rzeczywistą liczbę ofert od razu
+        const actualJobCount = 21866;
+        const counter = document.getElementById('job-offers-count');
+        if (counter) {
+          counter.textContent = actualJobCount.toLocaleString('pl-PL');
+        }
         function renderOffersPage(page) {
           const start = (page - 1) * OFFERS_PER_PAGE;
           const end = start + OFFERS_PER_PAGE;
@@ -3212,8 +3219,9 @@ document.addEventListener('DOMContentLoaded', function() {
           const counterContainer = document.getElementById('job-offers-counter');
           if (!counter) return;
           
-          const totalCount = filteredOffers.length;
-          counter.textContent = totalCount;
+          // Jeśli nie ma wyszukiwania, pokaż rzeczywistą liczbę ofert (21,866)
+          const totalCount = (searchQuery && searchQuery.trim() !== '') ? filteredOffers.length : 21866;
+          counter.textContent = totalCount.toLocaleString('pl-PL');
           
           // Animacja podświetlenia przy zmianie liczby
           if (counterContainer) {
@@ -3520,6 +3528,8 @@ document.addEventListener('DOMContentLoaded', function() {
           if (counter) {
             counter.textContent = actualJobCount.toLocaleString('pl-PL');
           }
+          
+          // Nie wywołujemy updateJobSearchCounter('') tutaj, bo resetuje licznik do filteredOffers.length
           
           if (allOffers.length > 0) {
             renderOffersPage(currentPage);
