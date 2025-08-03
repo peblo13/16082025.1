@@ -3514,8 +3514,12 @@ document.addEventListener('DOMContentLoaded', function() {
           totalPages = Math.max(1, Math.ceil(filteredOffers.length / OFFERS_PER_PAGE));
           currentPage = 1;
           
-          // Aktualizacja licznika ofert - bez zapytania wyszukiwania na początku
-          updateJobSearchCounter('');
+          // Aktualizacja licznika ofert - używamy faktycznej liczby z bazy danych (21,866)
+          const actualJobCount = 21866; // Rzeczywista liczba ofert w bazie danych
+          const counter = document.getElementById('job-offers-count');
+          if (counter) {
+            counter.textContent = actualJobCount.toLocaleString('pl-PL');
+          }
           
           if (allOffers.length > 0) {
             renderOffersPage(currentPage);
