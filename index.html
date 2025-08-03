@@ -3426,8 +3426,23 @@ document.addEventListener('DOMContentLoaded', function() {
           }
         });
         function toggleAdvancedJobSearch() {
+          console.log('🔧 toggleAdvancedJobSearch called');
           const adv = document.getElementById('advanced-job-search');
-          if (adv) adv.style.display = adv.style.display === 'none' ? 'block' : 'none';
+          const btn = document.querySelector('button[onclick="toggleAdvancedJobSearch()"]');
+          
+          if (adv) {
+            const isHidden = adv.style.display === 'none' || !adv.style.display;
+            adv.style.display = isHidden ? 'block' : 'none';
+            
+            // Aktualizuj tekst przycisku
+            if (btn) {
+              btn.textContent = isHidden ? '⚙️ Zaawansowane wyszukiwanie ▲' : '⚙️ Zaawansowane wyszukiwanie ▼';
+            }
+            
+            console.log('✅ Panel zaawansowanego wyszukiwania:', isHidden ? 'pokazany' : 'ukryty');
+          } else {
+            console.error('❌ Nie znaleziono elementu advanced-job-search');
+          }
         }
         window.toggleAdvancedJobSearch = toggleAdvancedJobSearch;
         
@@ -3457,15 +3472,38 @@ document.addEventListener('DOMContentLoaded', function() {
           const exp = document.getElementById('adv-job-experience')?.value.toLowerCase() || '';
           const salary = parseInt(document.getElementById('adv-job-salary')?.value, 10) || 0;
           const cats = Array.from(document.querySelectorAll('input[name="category[]"]:checked')).map(cb => cb.value.toLowerCase());
+          
+          console.log('🔍 Zaawansowane wyszukiwanie:', { loc, type, exp, salary, cats });
+          console.log('📊 Wszystkich ofert przed filtrowaniem:', allOffers.length);
+          
           filteredOffers = allOffers.filter(offer => {
             let ok = true;
-            if (loc && !(offer['Miejsce pracy']||'').toLowerCase().includes(loc)) ok = false;
-            if (type && !(offer['Rodzaj umowy']||'').toLowerCase().includes(type)) ok = false;
-            if (exp && !(offer['Doświadczenie']||'').toLowerCase().includes(exp)) ok = false;
-            if (salary && parseInt(offer['Wynagrodzenie']||'0',10) < salary) ok = false;
-            if (cats.length > 0 && !cats.some(cat => (offer['Kategoria']||'').toLowerCase().includes(cat))) ok = false;
+            
+            // Filtrowanie po lokalizacji - używamy właściwej nazwy kolumny
+            if (loc && !(offer[' Miejsce pracy'] || offer['Miejsce pracy'] || '').toLowerCase().includes(loc)) ok = false;
+            
+            // Filtrowanie po typie umowy - używamy właściwej nazwy kolumny  
+            if (type && !(offer[' Rodzaj umowy'] || offer['Rodzaj umowy'] || '').toLowerCase().includes(type)) ok = false;
+            
+            // Filtrowanie po stanowisku (jako kategoria)
+            if (cats.length > 0) {
+              const stanowisko = (offer['Stanowisko'] || '').toLowerCase();
+              const pracodawca = (offer[' Pracodawca'] || offer['Pracodawca'] || '').toLowerCase();
+              const matchesCategory = cats.some(cat => 
+                stanowisko.includes(cat) || 
+                pracodawca.includes(cat) ||
+                (cat === 'it' && (stanowisko.includes('programista') || stanowisko.includes('developer') || stanowisko.includes('it'))) ||
+                (cat === 'marketing' && stanowisko.includes('marketing')) ||
+                (cat === 'sprzedaz' && (stanowisko.includes('sprzedaż') || stanowisko.includes('handlowiec'))) ||
+                (cat === 'finanse' && (stanowisko.includes('finanse') || stanowisko.includes('księgow')))
+              );
+              if (!matchesCategory) ok = false;
+            }
+            
             return ok;
           });
+          
+          console.log('✅ Ofert po filtrowaniu:', filteredOffers.length);
           currentPage = 1;
           renderOffersPage(currentPage);
         });
