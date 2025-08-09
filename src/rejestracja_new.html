@@ -160,6 +160,7 @@
                 <button type="submit" style="background: linear-gradient(45deg, #FFD700, #FFA500); color: #000; border: none; padding: 15px; border-radius: 25px; font-weight: bold; font-size: 1.2rem; cursor: pointer; transition: all 0.3s ease;" onmouseover="this.style.background='linear-gradient(45deg, #FFA500, #FF8C00)'; this.style.transform='translateY(-2px)'" onmouseout="this.style.background='linear-gradient(45deg, #FFD700, #FFA500)'; this.style.transform='translateY(0)'">
                     💰 Załóż konto i zacznij zarabiać!
                 </button>
+                <button type="button" id="fill-test-data" style="background: linear-gradient(90deg,#00ff00 60%,#FFD700 100%); color: #222; font-weight: bold; font-size: 1rem; padding: 10px 24px; border-radius: 20px; margin-top: 10px; box-shadow: 0 2px 8px rgba(0,255,0,0.2); border: 2px solid #FFD700; cursor: pointer; transition: all 0.2s;">🔄 Wypełnij testowe dane</button>
             </form>
             
             <div style="text-align: center; margin-top: 20px; color: #fff;">
@@ -236,6 +237,19 @@
                 alert(`🎉 Rejestracja pomyślna!\n\nWitaj ${fullname}!\nPlan: ${planNames[selectedPlan] || 'Bezpłatny'}\n\nMożesz teraz zacząć tworzyć CV i zarabiać na swoich szablonach!`);
                 // Przekieruj do strony głównej z sukcesem
                 window.location.href = 'index.html?registered=success&plan=' + selectedPlan;
+            });
+
+            // Automatyczne wypełnianie testowych danych
+            document.getElementById('fill-test-data').addEventListener('click', function() {
+                document.getElementById('email').value = 'testuser' + Math.floor(Math.random()*1000) + '@example.com';
+                document.getElementById('password').value = 'TestHaslo123';
+                document.getElementById('confirm-password').value = 'TestHaslo123';
+                document.getElementById('fullname').value = 'Jan Testowy';
+                document.getElementById('terms').checked = true;
+                document.getElementById('newsletter').checked = true;
+                planSelect.value = 'premium';
+                planNameDiv.textContent = planNames['premium'];
+                planDescDiv.textContent = planDescs['premium'];
             });
         });
     </script>
