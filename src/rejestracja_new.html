@@ -98,7 +98,20 @@
             <div id="selected-plan-info" style="background: linear-gradient(135deg, #FFD700, #FFA500); color: #000; padding: 15px; border-radius: 10px; margin-bottom: 25px; text-align: center; font-weight: bold;">
                 <div style="font-size: 1.2rem; margin-bottom: 5px;">🎯 Wybrany plan:</div>
                 <div id="plan-name" style="font-size: 1.4rem;">Bezpłatny</div>
-                <div style="font-size: 0.9rem; margin-top: 5px;">💰 Możliwość zarabiania do 1,500 zł/mies!</div>
+                <div style="font-size: 0.9rem; margin-top: 5px;" id="plan-desc">💰 Możliwość zarabiania do 1,500 zł/mies!</div>
+                <div style="margin-top: 15px;">
+                  <label for="plan-select" style="font-weight: bold; color: #00ff00; margin-right: 8px;">Wybierz plan:</label>
+                  <select id="plan-select" style="padding: 8px 16px; border-radius: 8px; border: 2px solid #00ff00; font-size: 1rem;">
+                    <option value="free">Bezpłatny</option>
+                    <option value="premium">Premium (29.99 zł/mies)</option>
+                    <option value="business">Business (99.99 zł/mies)</option>
+                  </select>
+                  <!-- Dodano atrybut name do selecta -->
+                  <script>
+                    document.getElementById('plan-select').setAttribute('name', 'plan');
+                  </script>
+                  </select>
+                </div>
             </div>
 
             <!-- Formularz rejestracji -->
@@ -106,26 +119,32 @@
                 <div>
                     <label style="color: #00ff00; font-weight: bold; display: block; margin-bottom: 5px;">📧 Email:</label>
                     <input type="email" id="email" required style="width: 100%; padding: 12px; border: 2px solid #00ff00; border-radius: 8px; background: rgba(0,0,0,0.7); color: #fff; font-size: 1rem; box-sizing: border-box;" placeholder="twoj@email.com">
+                    <!-- Dodano walidację HTML -->
+                    <input type="email" id="email" name="email" required autocomplete="email" style="width: 100%; padding: 12px; border: 2px solid #00ff00; border-radius: 8px; background: rgba(0,0,0,0.7); color: #fff; font-size: 1rem; box-sizing: border-box;" placeholder="twoj@email.com">
                 </div>
                 
                 <div>
                     <label style="color: #00ff00; font-weight: bold; display: block; margin-bottom: 5px;">🔒 Hasło:</label>
                     <input type="password" id="password" required style="width: 100%; padding: 12px; border: 2px solid #00ff00; border-radius: 8px; background: rgba(0,0,0,0.7); color: #fff; font-size: 1rem; box-sizing: border-box;" placeholder="Minimum 8 znaków">
+                    <input type="password" id="password" name="password" required minlength="8" autocomplete="new-password" style="width: 100%; padding: 12px; border: 2px solid #00ff00; border-radius: 8px; background: rgba(0,0,0,0.7); color: #fff; font-size: 1rem; box-sizing: border-box;" placeholder="Minimum 8 znaków">
                 </div>
                 
                 <div>
                     <label style="color: #00ff00; font-weight: bold; display: block; margin-bottom: 5px;">🔒 Powtórz hasło:</label>
                     <input type="password" id="confirm-password" required style="width: 100%; padding: 12px; border: 2px solid #00ff00; border-radius: 8px; background: rgba(0,0,0,0.7); color: #fff; font-size: 1rem; box-sizing: border-box;" placeholder="Powtórz hasło">
+                    <input type="password" id="confirm-password" name="confirm-password" required minlength="8" autocomplete="new-password" style="width: 100%; padding: 12px; border: 2px solid #00ff00; border-radius: 8px; background: rgba(0,0,0,0.7); color: #fff; font-size: 1rem; box-sizing: border-box;" placeholder="Powtórz hasło">
                 </div>
                 
                 <div>
                     <label style="color: #00ff00; font-weight: bold; display: block; margin-bottom: 5px;">👤 Imię i nazwisko:</label>
                     <input type="text" id="fullname" required style="width: 100%; padding: 12px; border: 2px solid #00ff00; border-radius: 8px; background: rgba(0,0,0,0.7); color: #fff; font-size: 1rem; box-sizing: border-box;" placeholder="Jan Kowalski">
+                    <input type="text" id="fullname" name="fullname" required style="width: 100%; padding: 12px; border: 2px solid #00ff00; border-radius: 8px; background: rgba(0,0,0,0.7); color: #fff; font-size: 1rem; box-sizing: border-box;" placeholder="Jan Kowalski">
                 </div>
                 
                 <div style="margin: 15px 0;">
                     <label style="color: #fff; display: flex; align-items: center; cursor: pointer;">
                         <input type="checkbox" id="terms" required style="margin-right: 10px; transform: scale(1.2);">
+                        <input type="checkbox" id="terms" name="terms" required style="margin-right: 10px; transform: scale(1.2);">
                         Akceptuję <a href="#" style="color: #00ff00; text-decoration: none; margin: 0 5px;">regulamin</a> i <a href="#" style="color: #00ff00; text-decoration: none; margin: 0 5px;">politykę prywatności</a>
                     </label>
                 </div>
@@ -133,6 +152,7 @@
                 <div style="margin: 10px 0;">
                     <label style="color: #fff; display: flex; align-items: center; cursor: pointer;">
                         <input type="checkbox" id="newsletter" style="margin-right: 10px; transform: scale(1.2);">
+                        <input type="checkbox" id="newsletter" name="newsletter" style="margin-right: 10px; transform: scale(1.2);">
                         Chcę otrzymywać newsletter z ofertami pracy i nowościami
                     </label>
                 </div>
@@ -145,57 +165,77 @@
             <div style="text-align: center; margin-top: 20px; color: #fff;">
                 Masz już konto? <a href="logowanie.html" style="color: #00ff00; text-decoration: none; font-weight: bold;">Zaloguj się</a>
             </div>
+            <!-- Najbardziej widoczny przycisk do bazy CV -->
+            <div style="text-align: center; margin-top: 32px;">
+                <a href="baza_cv_new.html" style="display: inline-block; background: linear-gradient(90deg,#00ff00 60%,#FFD700 100%); color: #222; font-weight: bold; font-size: 1.3rem; padding: 18px 40px; border-radius: 30px; box-shadow: 0 6px 20px rgba(0,255,0,0.4); text-decoration: none; letter-spacing: 1px; border: 2px solid #FFD700; transition: all 0.3s;">🚀 Przejdź do bazy CV</a>
+            </div>
         </div>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Sprawdź parametry URL dla planu
-            const urlParams = new URLSearchParams(window.location.search);
-            const plan = urlParams.get('plan');
-            
-            // Ustaw informacje o planie
+            // Definicje planów
             const planNames = {
                 'free': 'Bezpłatny',
                 'premium': 'Premium (29.99 zł/mies)',
                 'business': 'Business (99.99 zł/mies)'
             };
-            
+            const planDescs = {
+                'free': '💰 Możliwość zarabiania do 1,500 zł/mies!',
+                'premium': '⭐ Pełny dostęp do kreatora CV, szablonów premium i bazy kandydatów!',
+                'business': '🏆 Wszystkie funkcje + dedykowane wsparcie i narzędzia dla firm!'
+            };
+            // Obsługa wyboru planu
+            const planSelect = document.getElementById('plan-select');
+            const planNameDiv = document.getElementById('plan-name');
+            const planDescDiv = document.getElementById('plan-desc');
+            planSelect.addEventListener('change', function() {
+                const selected = planSelect.value;
+                planNameDiv.textContent = planNames[selected];
+                planDescDiv.textContent = planDescs[selected];
+            });
+            // Ustaw domyślny plan na podstawie URL (jeśli jest)
+            const urlParams = new URLSearchParams(window.location.search);
+            const plan = urlParams.get('plan');
             if (plan && planNames[plan]) {
-                document.getElementById('plan-name').textContent = planNames[plan];
+                planSelect.value = plan;
+                planNameDiv.textContent = planNames[plan];
+                planDescDiv.textContent = planDescs[plan];
             }
-            
             // Obsługa formularza rejestracji
             document.getElementById('registration-form').addEventListener('submit', function(e) {
                 e.preventDefault();
-                
                 const email = document.getElementById('email').value;
                 const password = document.getElementById('password').value;
                 const confirmPassword = document.getElementById('confirm-password').value;
                 const fullname = document.getElementById('fullname').value;
                 const terms = document.getElementById('terms').checked;
-                
+                const selectedPlan = planSelect.value;
                 // Walidacja
                 if (password !== confirmPassword) {
                     alert('Hasła nie są identyczne!');
                     return;
                 }
-                
                 if (password.length < 8) {
                     alert('Hasło musi mieć minimum 8 znaków!');
                     return;
                 }
-                
                 if (!terms) {
                     alert('Musisz zaakceptować regulamin!');
                     return;
                 }
-                
-                // Symulacja rejestracji
-                alert(`🎉 Rejestracja pomyślna!\n\nWitaj ${fullname}!\nPlan: ${planNames[plan] || 'Bezpłatny'}\n\nMożesz teraz zacząć tworzyć CV i zarabiać na swoich szablonach!`);
-                
+                // Symulacja rejestracji z wybranym planem
+                const userData = {
+                    email: email,
+                    fullname: fullname,
+                    plan: selectedPlan,
+                    registered: true
+                };
+                sessionStorage.setItem('currentUser', JSON.stringify(userData));
+                localStorage.setItem('isLoggedIn', 'true');
+                alert(`🎉 Rejestracja pomyślna!\n\nWitaj ${fullname}!\nPlan: ${planNames[selectedPlan] || 'Bezpłatny'}\n\nMożesz teraz zacząć tworzyć CV i zarabiać na swoich szablonach!`);
                 // Przekieruj do strony głównej z sukcesem
-                window.location.href = 'index.html?registered=success&plan=' + (plan || 'free');
+                window.location.href = 'index.html?registered=success&plan=' + selectedPlan;
             });
         });
     </script>

@@ -26,6 +26,12 @@
         }
         
         /* Header */
+        /* Modal parent for proper scrolling and centering (do not force display) */
+        #addJobModal {
+            justify-content: center;
+            align-items: center;
+            overflow-y: auto;
+        }
         .header {
             background: rgba(0,0,0,0.9);
             padding: 1rem 0;
@@ -72,6 +78,35 @@
         }
         
         /* Main Content */
+
+        /* Dodaj ofertę pracy - duży wyróżniony przycisk */
+        .add-job-btn {
+            background: linear-gradient(90deg, #00ff00 0%, #00cc00 100%);
+            color: #111;
+            font-size: 2rem;
+            font-weight: bold;
+            padding: 22px 60px;
+            border: none;
+            border-radius: 18px;
+            box-shadow: 0 6px 32px rgba(0,255,0,0.25);
+            cursor: pointer;
+            margin-bottom: 10px;
+            transition: all 0.3s;
+            letter-spacing: 1px;
+            position: relative;
+            z-index: 2;
+        }
+        .add-job-btn:hover {
+            background: linear-gradient(90deg, #00cc00 0%, #00ff00 100%);
+            color: #fff;
+            box-shadow: 0 12px 48px rgba(0,255,0,0.35);
+            transform: translateY(-2px) scale(1.04);
+        }
+        .add-job-btn:active {
+            background: #00ff00;
+            color: #111;
+            transform: scale(0.98);
+        }
         .main-container {
             max-width: 1200px;
             margin: 0 auto;
@@ -589,6 +624,7 @@
                 <li><a href="index.html">Strona główna</a></li>
                 <li><a href="index.html#baza-cv">Baza CV</a></li>
                 <li><a href="oferty-pracy.html">Oferty pracy</a></li>
+                <li><a href="uslugi.html">Usługi</a></li>
                 <li><a href="index.html#kreator-cv">Kreator CV</a></li>
                 <li><a href="marketplace.html">💰 Marketplace</a></li>
             </ul>
@@ -597,6 +633,75 @@
 
     <!-- Main Content -->
     <main class="main-container">
+        <!-- Dodaj ofertę pracy - duży guzik na górze -->
+        <div style="text-align:center; margin-bottom: 30px;">
+            <button id="addJobBtn" class="add-job-btn" type="button">➕ Dodaj ofertę pracy</button>
+            <!-- Modal for advanced job offer form (hidden by default) -->
+            <div id="addJobModal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.85); z-index:9999; justify-content:center; align-items:center;">
+              <div style="background:#222; padding:40px 30px; border-radius:20px; max-width:500px; width:90%; box-shadow:0 8px 40px #00ff0033; color:#fff; position:relative; max-height:90vh; overflow-y:auto; display:flex; flex-direction:column;">
+                <button id="closeAddJobModalBtn" type="button" style="position:absolute; top:18px; right:18px; background:none; border:none; color:#00ff00; font-size:2rem; cursor:pointer;">&times;</button>
+                <h2 style="color:#00ff00; margin-bottom:18px; text-align:center;">Dodaj ofertę pracy</h2>
+                <form id="addJobForm">
+                  <div style="margin-bottom:16px;">
+                    <label for="modalStanowisko" style="color:#00ff00; font-weight:bold;">Stanowisko*</label>
+                    <input type="text" id="modalStanowisko" name="stanowisko" required style="width:100%; padding:10px; border-radius:8px; border:2px solid #00ff00; background:#111; color:#fff;">
+                  </div>
+                  <div style="margin-bottom:16px;">
+                    <label for="modalMiejsce" style="color:#00ff00; font-weight:bold;">Miejsce pracy*</label>
+                    <input type="text" id="modalMiejsce" name="miejsce" required style="width:100%; padding:10px; border-radius:8px; border:2px solid #00ff00; background:#111; color:#fff;">
+                  </div>
+                  <div style="margin-bottom:16px;">
+                    <label for="modalUmowa" style="color:#00ff00; font-weight:bold;">Rodzaj umowy*</label>
+                    <select id="modalUmowa" name="umowa" required style="width:100%; padding:10px; border-radius:8px; border:2px solid #00ff00; background:#111; color:#fff;">
+                      <option value="pełny etat">Pełny etat</option>
+                      <option value="umowa zlecenie">Umowa zlecenie</option>
+                      <option value="umowa o dzieło">Umowa o dzieło</option>
+                      <option value="praktyki">Praktyki</option>
+                      <option value="staż">Staż</option>
+                    </select>
+                  </div>
+                  <div style="margin-bottom:16px;">
+                    <label for="modalPracodawca" style="color:#00ff00; font-weight:bold;">Pracodawca*</label>
+                    <input type="text" id="modalPracodawca" name="pracodawca" required style="width:100%; padding:10px; border-radius:8px; border:2px solid #00ff00; background:#111; color:#fff;">
+                  </div>
+                  <div style="margin-bottom:16px;">
+                    <label for="modalData" style="color:#00ff00; font-weight:bold;">Dostępna od*</label>
+                    <input type="date" id="modalData" name="data" required style="width:100%; padding:10px; border-radius:8px; border:2px solid #00ff00; background:#111; color:#fff;">
+                  </div>
+                  <div style="margin-bottom:16px;">
+                    <label for="modalOpis" style="color:#00ff00; font-weight:bold;">Opis stanowiska*</label>
+                    <textarea id="modalOpis" name="opis" required rows="4" style="width:100%; padding:10px; border-radius:8px; border:2px solid #00ff00; background:#111; color:#fff;"></textarea>
+                  </div>
+                  <div style="margin-bottom:16px;">
+                    <label for="modalWymagania" style="color:#00ff00; font-weight:bold;">Wymagania</label>
+                    <textarea id="modalWymagania" name="wymagania" rows="3" style="width:100%; padding:10px; border-radius:8px; border:2px solid #00ff00; background:#111; color:#fff;" placeholder="np. wykształcenie, doświadczenie, umiejętności"></textarea>
+                  </div>
+                  <div style="margin-bottom:16px;">
+                    <label for="modalObowiazki" style="color:#00ff00; font-weight:bold;">Obowiązki</label>
+                    <textarea id="modalObowiazki" name="obowiazki" rows="3" style="width:100%; padding:10px; border-radius:8px; border:2px solid #00ff00; background:#111; color:#fff;" placeholder="np. zakres obowiązków"></textarea>
+                  </div>
+                  <div style="margin-bottom:16px;">
+                    <label for="modalWynagrodzenie" style="color:#00ff00; font-weight:bold;">Wynagrodzenie</label>
+                    <input type="text" id="modalWynagrodzenie" name="wynagrodzenie" style="width:100%; padding:10px; border-radius:8px; border:2px solid #FFD700; background:#111; color:#FFD700;" placeholder="np. 5000-7000 PLN brutto">
+                  </div>
+                  <div style="margin-bottom:16px;">
+                    <label for="modalKontakt" style="color:#00ff00; font-weight:bold;">Kontakt do rekrutacji*</label>
+                    <input type="text" id="modalKontakt" name="kontakt" required style="width:100%; padding:10px; border-radius:8px; border:2px solid #00ff00; background:#111; color:#fff;" placeholder="np. email, telefon">
+                  </div>
+                  <div style="margin-bottom:16px;">
+                    <label for="modalWWW" style="color:#00ff00; font-weight:bold;">Strona www firmy</label>
+                    <input type="url" id="modalWWW" name="www" style="width:100%; padding:10px; border-radius:8px; border:2px solid #00ff00; background:#111; color:#fff;" placeholder="np. https://firma.pl">
+                  </div>
+                  <div style="margin-bottom:22px; display:flex; align-items:center; gap:10px;">
+                    <input type="checkbox" id="modalWyroznij" name="wyroznij" style="accent-color:#00ff00; width:22px; height:22px;">
+                    <label for="modalWyroznij" style="color:#FFD700; font-weight:bold; font-size:1.1rem;">Wyróżnij ofertę <span style="color:#fff; font-size:0.95rem;">(+49 PLN)</span></label>
+                  </div>
+                  <button type="submit" style="width:100%; background:linear-gradient(90deg,#FFD700,#FFB300); color:#111; font-size:1.3rem; font-weight:bold; padding:16px 0; border:none; border-radius:12px; box-shadow:0 4px 18px #FFD70055; cursor:pointer; margin-bottom:8px;">💾 Dodaj ofertę</button>
+                </form>
+                <div id="addJobMsg" style="margin-top:10px; text-align:center; color:#FFD700; font-weight:bold;"></div>
+              </div>
+            </div>
+        </div>
         <!-- Page Title -->
         <div class="page-title">
             <h1>🔍 Oferty Pracy</h1>
@@ -605,28 +710,28 @@
 
         <!-- Search Section -->
         <section class="search-section">
-            <form class="search-form" id="jobSearchForm">
-                <div class="form-group">
-                    <label for="jobTitle">Stanowisko / Słowa kluczowe</label>
-                    <input type="text" id="jobTitle" placeholder="np. Programista, Księgowy, Manager...">
-                </div>
-                <div class="form-group">
-                    <label for="jobLocation">Lokalizacja</label>
-                    <input type="text" id="jobLocation" placeholder="np. Warszawa, Kraków, Gdańsk...">
-                </div>
-                <div class="form-group">
-                    <label for="jobType">Rodzaj umowy</label>
-                    <select id="jobType">
-                        <option value="">Wszystkie</option>
-                        <option value="pełny etat">Pełny etat</option>
-                        <option value="umowa zlecenie">Umowa zlecenie</option>
-                        <option value="umowa o dzieło">Umowa o dzieło</option>
-                        <option value="praktyki">Praktyki</option>
-                        <option value="staż">Staż</option>
-                    </select>
-                </div>
-                <button type="submit" class="search-btn">🔍 Szukaj</button>
-            </form>
+          <form class="search-form" id="jobSearchForm" autocomplete="off" onsubmit="event.preventDefault(); performSearch();">
+            <div class="form-group">
+              <label for="jobTitle">Stanowisko</label>
+              <input type="text" id="jobTitle" name="jobTitle" placeholder="np. Programista, Sprzedawca">
+            </div>
+            <div class="form-group">
+              <label for="jobLocation">Lokalizacja</label>
+              <input type="text" id="jobLocation" name="jobLocation" placeholder="np. Warszawa, zdalnie">
+            </div>
+            <div class="form-group">
+              <label for="jobType">Rodzaj umowy</label>
+              <select id="jobType" name="jobType">
+                <option value="">Dowolna</option>
+                <option value="pełny etat">Pełny etat</option>
+                <option value="umowa zlecenie">Umowa zlecenie</option>
+                <option value="umowa o dzieło">Umowa o dzieło</option>
+                <option value="praktyki">Praktyki</option>
+                <option value="staż">Staż</option>
+              </select>
+            </div>
+            <button class="search-btn" type="submit">🔍 Szukaj pracy</button>
+          </form>
         </section>
 
         <!-- Stats Section -->
@@ -689,63 +794,180 @@
         let offersPerPage = 10;
         let totalPages = 1;
 
+        // Modal logic
+        document.addEventListener('DOMContentLoaded', function() {
+          // Show modal only when 'Dodaj ofertę pracy' button is clicked
+          var addJobBtn = document.getElementById('addJobBtn');
+          if (addJobBtn) {
+            addJobBtn.onclick = function(e) {
+              e.stopPropagation();
+              document.getElementById('addJobModal').style.display = 'flex';
+            };
+          }
+          // Ensure close (X) button works reliably
+          var closeBtn = document.getElementById('closeAddJobModalBtn');
+          if (closeBtn) {
+            closeBtn.addEventListener('click', function(e) {
+              e.stopPropagation();
+              closeAddJobModal();
+            });
+          }
+          // Redirect search and add service buttons to uslugi.html
+          var searchServicesBtn = document.getElementById('searchServicesBtn');
+          if (searchServicesBtn) {
+            searchServicesBtn.onclick = function() {
+              window.location.href = 'uslugi.html';
+            };
+          }
+          var addServiceBtn = document.getElementById('addServiceBtn');
+          if (addServiceBtn) {
+            addServiceBtn.onclick = function() {
+              window.location.href = 'uslugi.html';
+            };
+          }
+        });
+        function closeAddJobModal() {
+          document.getElementById('addJobModal').style.display = 'none';
+          document.getElementById('addJobMsg').textContent = '';
+          document.getElementById('addJobForm').reset();
+        }
+
+        // Handle form submission
+        document.addEventListener('DOMContentLoaded', function() {
+          const form = document.getElementById('addJobForm');
+          if (form) {
+            form.onsubmit = function(e) {
+              e.preventDefault();
+              // Gather form data
+              const stanowisko = document.getElementById('modalStanowisko').value.trim();
+              const miejsce = document.getElementById('modalMiejsce').value.trim();
+              const umowa = document.getElementById('modalUmowa').value.trim();
+              const pracodawca = document.getElementById('modalPracodawca').value.trim();
+              const data = document.getElementById('modalData').value.trim();
+              const opis = document.getElementById('modalOpis').value.trim();
+              const wymagania = document.getElementById('modalWymagania').value.trim();
+              const obowiazki = document.getElementById('modalObowiazki').value.trim();
+              const wynagrodzenie = document.getElementById('modalWynagrodzenie').value.trim();
+              const kontakt = document.getElementById('modalKontakt').value.trim();
+              const www = document.getElementById('modalWWW').value.trim();
+              const wyroznij = document.getElementById('modalWyroznij').checked;
+
+              // Simulate paid highlight
+              let msg = '✅ Oferta została dodana!';
+              if (wyroznij) {
+                msg += ' Oferta będzie wyróżniona po opłaceniu 49 PLN.';
+              }
+              document.getElementById('addJobMsg').textContent = msg;
+
+              // Simulate adding to offers (local only)
+              allOffers.unshift({
+                'Stanowisko': stanowisko,
+                'Miejsce pracy': miejsce,
+                'Rodzaj umowy': umowa,
+                'Pracodawca': pracodawca,
+                'Dostępna od': data,
+                'Opis': opis,
+                'Wymagania': wymagania,
+                'Obowiązki': obowiazki,
+                'Wynagrodzenie': wynagrodzenie,
+                'Kontakt': kontakt,
+                'WWW': www,
+                'Wyróżniona': wyroznij ? 'TAK' : ''
+              });
+              filteredOffers = [...allOffers];
+              updateStats();
+              displayOffers();
+
+              setTimeout(closeAddJobModal, 1800);
+            };
+          }
+        });
+
         // Load job offers on page load
         document.addEventListener('DOMContentLoaded', function() {
             loadJobOffers();
             setupSearch();
         });
 
+        // Prosta obsługa formularza wyszukiwania
+        function setupSearch() {
+            // Usuwamy całą obsługę JS dla formularza wyszukiwania, aby działał jak zwykły submit
+            // Jeśli chcesz przekierować na inną podstronę, ustaw action="oferty-pracy.html" w <form>
+        }
+
         // Load CSV data
         function loadJobOffers() {
             console.log('🔄 Ładowanie ofert pracy...');
             
-            Papa.parse('praca_baza.csv', {
-                download: true,
-                header: true,
-                delimiter: ';',
-                skipEmptyLines: true,
-                complete: function(results) {
-                    console.log('✅ Dane CSV załadowane:', results.data.length, 'rekordów');
-                    
-                    // Filter valid offers
-                    const validOffers = results.data.filter(offer => {
-                        const stanowisko = (offer['Stanowisko'] || '').trim();
-                        const miejsce = (offer[' Miejsce pracy'] || '').trim();
-                        return stanowisko && miejsce && stanowisko !== '' && miejsce !== '';
+            // Najpierw sprawdź, czy plik jest dostępny przez fetch
+            fetch('praca_baza.csv')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Plik praca_baza.csv nie jest dostępny na serwerze.');
+                    }
+                    // Jeśli plik jest dostępny, parsuj przez PapaParse
+                    Papa.parse('praca_baza.csv', {
+                        download: true,
+                        header: true,
+                        delimiter: ';',
+                        skipEmptyLines: true,
+                        complete: function(results) {
+                            console.log('✅ Dane CSV załadowane:', results.data.length, 'rekordów');
+                            // Usuń spacje z kluczy nagłówków i wyczyść wartości
+                            const cleaned = results.data.map(offer => {
+                                const obj = {};
+                                Object.keys(offer).forEach(key => {
+                                    let val = offer[key];
+                                    if (typeof val === 'string') {
+                                        val = val.replace(/^\s*"?|"?\s*$/g, '').trim(); // usuń cudzysłowy i spacje
+                                    }
+                                    obj[key.trim()] = val;
+                                });
+                                return obj;
+                            });
+                            // Filter valid offers (wystarczy stanowisko i miejsce)
+                            const validOffers = cleaned.filter(offer => {
+                                const stanowisko = (offer['Stanowisko'] || '').replace(/^\s*"?|"?\s*$/g, '').trim();
+                                const miejsce = (offer['Miejsce pracy'] || '').replace(/^\s*"?|"?\s*$/g, '').trim();
+                                return stanowisko && miejsce;
+                            });
+                            console.log('✅ Prawidłowe oferty:', validOffers.length);
+                            allOffers = validOffers;
+                            filteredOffers = [...allOffers];
+                            updateStats();
+                            displayOffers();
+                        },
+                        error: function(error) {
+                            console.error('❌ Błąd ładowania CSV:', error);
+                            document.getElementById('jobOffersContainer').innerHTML = `
+                                <div style="text-align: center; color: #ff2222; padding: 40px;">
+                                    <h3>❌ Błąd ładowania ofert</h3>
+                                    <p>Nie udało się załadować ofert pracy. Spróbuj odświeżyć stronę.</p>
+                                </div>
+                            `;
+                        }
                     });
-                    
-                    console.log('✅ Prawidłowe oferty:', validOffers.length);
-                    
-                    allOffers = validOffers;
-                    filteredOffers = [...allOffers];
-                    
-                    updateStats();
-                    displayOffers();
-                },
-                error: function(error) {
-                    console.error('❌ Błąd ładowania CSV:', error);
+                })
+                .catch(error => {
+                    console.error('❌ Błąd połączenia z plikiem CSV:', error);
                     document.getElementById('jobOffersContainer').innerHTML = `
                         <div style="text-align: center; color: #ff2222; padding: 40px;">
-                            <h3>❌ Błąd ładowania ofert</h3>
-                            <p>Nie udało się załadować ofert pracy. Spróbuj odświeżyć stronę.</p>
+                            <h3>❌ Błąd połączenia z plikiem ofert</h3>
+                            <p>${error.message || 'Nie można połączyć się z plikiem praca_baza.csv.'}</p>
                         </div>
                     `;
-                }
-            });
+                });
         }
 
         // Update statistics
         function updateStats() {
             document.getElementById('totalOffers').textContent = allOffers.length.toLocaleString();
             document.getElementById('newToday').textContent = Math.floor(allOffers.length * 0.1); // Symulacja
-            
             // Count unique companies
-            const companies = new Set(allOffers.map(offer => (offer[' Pracodawca'] || '').trim()));
+            const companies = new Set(allOffers.map(offer => (offer['Pracodawca'] || '').trim()));
             document.getElementById('companiesCount').textContent = companies.size;
-            
             // Count remote offers (simulation)
             document.getElementById('remoteOffers').textContent = Math.floor(allOffers.length * 0.15);
-            
             document.getElementById('offersCount').textContent = `${filteredOffers.length} ofert`;
         }
 
@@ -776,10 +998,10 @@
         // Create job card HTML
         function createJobCard(offer) {
             const stanowisko = (offer['Stanowisko'] || '').replace(/"/g, '').trim();
-            const miejsce = (offer[' Miejsce pracy'] || '').replace(/"/g, '').trim();
-            const umowa = (offer[' Rodzaj umowy'] || '').replace(/"/g, '').trim();
-            const pracodawca = (offer[' Pracodawca'] || '').replace(/"/g, '').trim();
-            const data = (offer[' Dostępna od'] || '').replace(/"/g, '').trim();
+            const miejsce = (offer['Miejsce pracy'] || '').replace(/"/g, '').trim();
+            const umowa = (offer['Rodzaj umowy'] || '').replace(/"/g, '').trim();
+            const pracodawca = (offer['Pracodawca'] || '').replace(/"/g, '').trim();
+            const data = (offer['Dostępna od'] || '').replace(/"/g, '').trim();
             
             // Generate random salary for display
             const salaryMin = Math.floor(Math.random() * 3000) + 3000;
@@ -835,30 +1057,7 @@
             if (totalPages > 1) {
                 paginationElement.style.display = 'flex';
                 pageInfo.textContent = `Strona ${currentPage} z ${totalPages}`;
-            } else {
-                paginationElement.style.display = 'none';
             }
-        }
-
-        // Change page
-        function changePage(direction) {
-            if (direction === 'prev' && currentPage > 1) {
-                currentPage--;
-            } else if (direction === 'next' && currentPage < totalPages) {
-                currentPage++;
-            }
-            
-            displayOffers();
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        // Setup search functionality
-        function setupSearch() {
-            const searchForm = document.getElementById('jobSearchForm');
-            searchForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-                performSearch();
-            });
         }
 
         // Perform search
@@ -868,14 +1067,15 @@
             const jobType = document.getElementById('jobType').value.toLowerCase().trim();
             
             filteredOffers = allOffers.filter(offer => {
+                // Ujednolicone klucze bez spacji
                 const stanowisko = (offer['Stanowisko'] || '').toLowerCase();
-                const miejsce = (offer[' Miejsce pracy'] || '').toLowerCase();
-                const umowa = (offer[' Rodzaj umowy'] || '').toLowerCase();
-                
+                const miejsce = (offer['Miejsce pracy'] || '').toLowerCase();
+                const umowa = (offer['Rodzaj umowy'] || '').toLowerCase();
+
                 const matchesTitle = !jobTitle || stanowisko.includes(jobTitle);
                 const matchesLocation = !jobLocation || miejsce.includes(jobLocation);
                 const matchesType = !jobType || umowa.includes(jobType);
-                
+
                 return matchesTitle && matchesLocation && matchesType;
             });
             

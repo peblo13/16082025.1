@@ -9,19 +9,22 @@ const DYNAMIC_CACHE = 'ecvjob-dynamic-v1';
 
 // Files to cache immediately
 const STATIC_FILES = [
-    './',
     './index.html',
-    './css/optimized-styles.css',
-    './js/optimized-app.js',
     './images/tlo.jpg',
     './favicon.ico'
 ];
 
 // Install event
+// Install event z obsługą błędów cache.addAll
 self.addEventListener('install', event => {
     event.waitUntil(
         caches.open(STATIC_CACHE)
-            .then(cache => cache.addAll(STATIC_FILES))
+            .then(cache => {
+                return cache.addAll(STATIC_FILES)
+                    .catch(err => {
+                        console.warn('Nie udało się dodać pliku do cache:', err);
+                    });
+            })
             .then(() => self.skipWaiting())
     );
 });
