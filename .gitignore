@@ -1,0 +1,11 @@
+# Ignoruj pliki tymczasowe, systemowe
+*.log
+*.tmp
+*.bak
+.DS_Store
+Thumbs.db
+node_modules/
+.env
+.idea/
+.vscode/
+__pycache__/
